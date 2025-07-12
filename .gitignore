@@ -1,0 +1,9 @@
+__pycache__/
+.pytest_cache/
+.venv/
+.vscode/
+*.env
+_site/
+docs/build/
+.DS_Store
+todo.md

@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BorgLLM - Unified LLM Integration & Management</title>
+    <meta name="description"
+        content="Zero config LangChain-compatible LLM client with API key rotation, rate limit management, and custom fallback strategies.">
+    <meta name="keywords" content="LLM, OpenAI, Anthropic, GPT, Claude, AI, Machine Learning, Python, LangChain">
+
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="BorgLLM - Unified LLM Integration & Management">
+    <meta property="og:description"
+        content="Zero config LangChain-compatible LLM client with API key rotation, rate limit management, and custom fallback strategies.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://omarkamali.github.io/borgllm/">
+
+    <!-- Twitter Card tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="BorgLLM - Unified LLM Integration & Management">
+    <meta name="twitter:description"
+        content="Zero config LangChain-compatible LLM client with API key rotation, rate limit management, and custom fallback strategies.">
+
+    <!-- Favicon -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Highlight.js for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #e4e4e7;
+            background: #0a0a0a;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Borg-inspired animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(0, 255, 127, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(138, 43, 226, 0.1) 0%, transparent 50%);
+            z-index: -1;
+            animation: borgPulse 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes borgPulse {
+            0% {
+                opacity: 0.3;
+            }
+
+            100% {
+                opacity: 0.7;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .hero {
+            padding: 80px 0;
+            text-align: center;
+            color: #e4e4e7;
+            position: relative;
+            background: linear-gradient(135deg, rgba(0, 255, 127, 0.1) 0%, rgba(0, 191, 255, 0.1) 100%);
+            border-bottom: 1px solid rgba(0, 255, 127, 0.3);
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(0, 255, 127, 0.5);
+            background: linear-gradient(45deg, #00ff7f, #00bfff, #8a2be2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: borgGlow 3s ease-in-out infinite alternate;
+        }
+
+        .github-star-button-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        @keyframes borgGlow {
+            0% {
+                filter: brightness(1);
+            }
+
+            100% {
+                filter: brightness(1.2);
+            }
+        }
+
+        .hero .subtitle {
+            font-size: 1.4rem;
+            font-weight: 400;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            color: #a1a1aa;
+        }
+
+        .hero-badges {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 0;
+        }
+
+        .badge {
+            background: transparent;
+            border: none;
+            padding: 12px 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #e4e4e7;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .badge:hover {
+            color: #00ff7f;
+            background: rgba(0, 255, 127, 0.1);
+        }
+
+        .badge:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 20%;
+            height: 60%;
+            width: 1px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #00ff7f, #00bfff);
+            color: #0a0a0a;
+            box-shadow: 0 4px 15px rgba(0, 255, 127, 0.3);
+            font-weight: 700;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 127, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #e4e4e7;
+            border: 2px solid rgba(0, 255, 127, 0.5);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 255, 127, 0.1);
+            border-color: rgba(0, 255, 127, 0.8);
+            box-shadow: 0 0 15px rgba(0, 255, 127, 0.3);
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 60px 0;
+            border-top: 1px solid rgba(0, 255, 127, 0.2);
+            border-bottom: 1px solid rgba(0, 255, 127, 0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #00ff7f, #00bfff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: #a1a1aa;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .main-content {
+            background: rgba(20, 20, 20, 0.9);
+            padding: 80px 0;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 100px;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 255, 127, 0.3);
+            background: rgba(17, 17, 17, 0.8);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 127, 0.1);
+            border-color: rgba(0, 255, 127, 0.5);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .feature h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #e4e4e7;
+        }
+
+        .feature p {
+            color: #a1a1aa;
+            line-height: 1.6;
+        }
+
+        .code-example {
+            background: #111111;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 40px 0;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 255, 127, 0.3);
+        }
+
+        .code-example::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #00ff7f, #00bfff, #8a2be2);
+        }
+
+        .code-example h3 {
+            color: #e4e4e7;
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-btn {
+            background: rgba(0, 255, 127, 0.1);
+            border: 1px solid rgba(0, 255, 127, 0.3);
+            color: #00ff7f;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: rgba(0, 255, 127, 0.2);
+            border-color: rgba(0, 255, 127, 0.5);
+            box-shadow: 0 0 10px rgba(0, 255, 127, 0.3);
+        }
+
+        .code-example pre {
+            margin: 0;
+            overflow-x: auto;
+            background: transparent;
+            text-align: left;
+        }
+
+        .code-example code {
+            background: transparent;
+            color: #e5e7eb;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #e4e4e7;
+            margin-bottom: 50px;
+            background: linear-gradient(45deg, #00ff7f, #00bfff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .footer {
+            background: #111111;
+            color: #e4e4e7;
+            padding: 40px 0;
+            text-align: center;
+            border-top: 1px solid rgba(0, 255, 127, 0.3);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #e4e4e7;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #00ff7f;
+        }
+
+        .copyright {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* Providers section */
+        .providers-intro {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .providers-intro p {
+            font-size: 1.1rem;
+            color: #a1a1aa;
+        }
+
+        .providers-table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 255, 127, 0.3);
+            background: rgba(17, 17, 17, 0.8);
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .providers-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .providers-table th {
+            background: rgba(0, 255, 127, 0.1);
+            color: #e4e4e7;
+            font-weight: 600;
+            padding: 16px 12px;
+            text-align: left;
+            border-bottom: 2px solid rgba(0, 255, 127, 0.3);
+        }
+
+        .providers-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(0, 255, 127, 0.1);
+            color: #e4e4e7;
+        }
+
+        .providers-table tr:hover {
+            background: rgba(0, 255, 127, 0.05);
+        }
+
+        .provider-name {
+            font-weight: 600;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .provider-icon-img {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            flex-shrink: 0;
+            vertical-align: middle;
+            background-color: transparent;
+        }
+
+        .filter-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            margin-right: 6px;
+            vertical-align: middle;
+            background-color: transparent;
+        }
+
+        .model-cell {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+
+        .copyable {
+            background: rgba(0, 255, 127, 0.1);
+            color: #00ff7f;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+        .copyable:hover {
+            background: rgba(0, 255, 127, 0.2);
+            box-shadow: 0 0 10px rgba(0, 255, 127, 0.3);
+        }
+
+        .copy-btn-small {
+            background: transparent;
+            border: 1px solid rgba(0, 255, 127, 0.3);
+            color: #00ff7f;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn-small:hover {
+            background: rgba(0, 255, 127, 0.1);
+            border-color: rgba(0, 255, 127, 0.5);
+            box-shadow: 0 0 8px rgba(0, 255, 127, 0.3);
+        }
+
+        .providers-cta {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        /* Filter Pills */
+        .providers-filter {
+            margin-bottom: 30px;
+        }
+
+        .filter-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .filter-pill {
+            background: rgba(17, 17, 17, 0.8);
+            border: 1px solid rgba(0, 255, 127, 0.3);
+            color: #e4e4e7;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-pill:hover {
+            background: rgba(0, 255, 127, 0.1);
+            border-color: rgba(0, 255, 127, 0.5);
+            box-shadow: 0 0 10px rgba(0, 255, 127, 0.3);
+        }
+
+        .filter-pill.active {
+            background: rgba(0, 255, 127, 0.2);
+            border-color: rgba(0, 255, 127, 0.8);
+            color: #00ff7f;
+        }
+
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(17, 17, 17, 0.8);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 255, 127, 0.3);
+        }
+
+        .pagination-info {
+            color: #a1a1aa;
+            font-size: 0.9rem;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pagination-btn {
+            background: rgba(0, 255, 127, 0.1);
+            border: 1px solid rgba(0, 255, 127, 0.3);
+            color: #00ff7f;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: rgba(0, 255, 127, 0.2);
+            border-color: rgba(0, 255, 127, 0.5);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-numbers {
+            display: flex;
+            gap: 5px;
+        }
+
+        .page-number {
+            background: rgba(0, 255, 127, 0.1);
+            border: 1px solid rgba(0, 255, 127, 0.3);
+            color: #e4e4e7;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .page-number:hover {
+            background: rgba(0, 255, 127, 0.2);
+            border-color: rgba(0, 255, 127, 0.5);
+        }
+
+        .page-number.active {
+            background: rgba(0, 255, 127, 0.3);
+            border-color: rgba(0, 255, 127, 0.8);
+            color: #00ff7f;
+        }
+
+        /* Section spacing and dividers */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 127, 0.3), transparent);
+            margin: 80px 0;
+        }
+
+        .examples-cta {
+            text-align: center;
+            margin-top: 60px;
+            padding: 40px;
+            background: rgba(0, 255, 127, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 255, 127, 0.2);
+        }
+
+        .examples-cta .btn {
+            margin-bottom: 16px;
+        }
+
+        .examples-description {
+            color: #a1a1aa;
+            max-width: 500px;
+            margin: 0 auto;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        #provider-model {
+            color: #00ff7f;
+            font-weight: 600;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .code-example {
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .providers-table {
+                font-size: 0.8rem;
+            }
+
+            .providers-table th,
+            .providers-table td {
+                padding: 8px 6px;
+            }
+
+            .copyable {
+                font-size: 0.7rem;
+                padding: 2px 6px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 30px;
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+            }
+
+            .hero-badges {
+                justify-content: center;
+            }
+
+            .badge {
+                padding: 10px 16px;
+                font-size: 0.8rem;
+            }
+
+            .examples-cta {
+                padding: 30px 20px;
+                margin-top: 40px;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fadeInUp {
+            animation: fadeInUp 0.8s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hero">
+        <div class="container">
+            <h1 class="animate-fadeInUp">🤖 BorgLLM</h1>
+            <div class="github-star-button-container">
+                <iframe
+                    src="https://ghbtns.com/github-btn.html?user=omarkamali&repo=borgllm&type=star&count=true&size=large"
+                    frameborder="0" scrolling="0" width="77" height="30" title="GitHub Star"></iframe>
+            </div>
+            <p class="subtitle animate-fadeInUp">
+                Zero config LangChain-compatible LLM client with API key rotation, rate limit management, and custom
+                fallback strategies.
+            </p>
+
+            <div class="hero-badges animate-fadeInUp">
+                <a href="https://pypi.org/project/borgllm/" class="badge">📦 PyPI</a>
+                <a href="https://github.com/omarkamali/borgllm" class="badge">⭐ GitHub</a>
+                <a href="#providers" class="badge">🔌 Providers</a>
+                <a href="/docs/" class="badge">📚 API Reference</a>
+            </div>
+
+            <div class="cta-buttons animate-fadeInUp">
+                <a href="#quick-start" class="btn btn-primary">🚀 Quick Start</a>
+                <a href="https://github.com/omarkamali/borgllm/tree/master/examples" class="btn btn-secondary">📖 View
+                    Examples</a>
+            </div>
+
+            <div class="code-example animate-fadeInUp" style="margin-top: 40px;">
+                <h3>Try it now - Zero Configuration <button class="copy-btn" onclick="copyHeroCode()">📋 Copy</button>
+                </h3>
+                <pre><code class="language-python" id="hero-code">from borgllm import create_llm
+
+# Works with any provider instantly
+llm = create_llm("openai:gpt-4o")
+response = llm.invoke("Hello BorgLLM!")
+print(response.content)</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">17+</div>
+                    <div class="stat-label">LLM Providers</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">30+</div>
+                    <div class="stat-label">Supported Models</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">LangChain Compatible</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Config Required</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <h2 class="section-title">✨ Key Features</h2>
+
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Unified Interface</h3>
+                    <p>Single API for multiple LLM providers including OpenAI, Anthropic, Google, Groq, and more.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">🔑</div>
+                    <h3>API Key Rotation</h3>
+                    <p>Automatic round-robin rotation for multiple API keys with built-in rate limit handling.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">🧠</div>
+                    <h3>LangChain Compatible</h3>
+                    <p>Seamless integration with LangChain framework - drop-in replacement for ChatOpenAI.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Provider Fallback</h3>
+                    <p>Automatic switching to alternative providers/models in case of failures or rate limits.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Zero Configuration</h3>
+                    <p>Works out of the box with environment variables, or configure via borg.yml for advanced features.
+                    </p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Virtual Providers</h3>
+                    <p>Create custom fallback strategies and merge multiple providers seamlessly.</p>
+                </div>
+            </div>
+
+            <div id="providers">
+                <h2 class="section-title">🔌 Supported Providers & Models</h2>
+
+                <div class="providers-intro">
+                    <p>BorgLLM supports 17+ LLM providers out of the box. Click any model to copy it to your clipboard.
+                    </p>
+                    <p>Any model identifier from these providers will also work out of the box, even if it's not listed
+                        here.</p>
+                </div>
+
+                <div class="providers-filter">
+                    <div class="filter-pills">
+                        <button class="filter-pill active" data-provider="all">All</button>
+                        <!-- Filter pills will be dynamically generated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="providers-table-container">
+                    <table class="providers-table">
+                        <thead>
+                            <tr>
+                                <th>Provider</th>
+                                <th>Model</th>
+                                <th>Description</th>
+                                <th>Copy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Table content will be dynamically generated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination-container">
+                    <div class="pagination-info">
+                        <span id="pagination-info">Showing 1-20 of 32 models</span>
+                    </div>
+                    <div class="pagination-controls">
+                        <button id="prev-page" class="pagination-btn" onclick="changePage(-1)">← Previous</button>
+                        <div class="page-numbers" id="page-numbers"></div>
+                        <button id="next-page" class="pagination-btn" onclick="changePage(1)">Next →</button>
+                    </div>
+                </div>
+
+                <div class="providers-cta">
+                    <a href="/docs/" class="btn btn-primary">📚 View Full Documentation</a>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <div id="quick-start">
+                <h2 class="section-title">🚀 Quick Start</h2>
+
+                <div class="code-example">
+                    <h3>Installation <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></h3>
+                    <pre><code class="language-bash">pip install borgllm</code></pre>
+                </div>
+
+                <div class="code-example">
+                    <h3>Basic Usage - Zero Configuration <button class="copy-btn" onclick="copyCode(this)">📋
+                            Copy</button></h3>
+                    <pre><code class="language-python">from borgllm import create_llm
+from langchain_core.messages import HumanMessage
+
+# Works with any provider - just specify provider:model
+llm = create_llm("openai:gpt-4o", temperature=0.7)
+
+# It's a standard LangChain ChatOpenAI instance
+response = llm.invoke([HumanMessage(content="Hello! How are you?")])
+print(response.content)
+
+# Try different providers seamlessly
+anthropic_llm = create_llm("anthropic:claude-sonnet-4", temperature=0.7)
+google_llm = create_llm("google:gemini-2.5-pro", temperature=0.7)
+groq_llm = create_llm("groq:llama-3.3-70b-versatile", temperature=0.7)</code></pre>
+                </div>
+
+                <div class="code-example">
+                    <h3>Advanced Features with borg.yml <button class="copy-btn" onclick="copyCode(this)">📋
+                            Copy</button></h3>
+                    <pre><code class="language-yaml"># borg.yml - Advanced configuration
+llm:
+  providers:
+    - name: "local_qwen"
+      base_url: "http://localhost:1234/v1"
+      model: "qwen/qwen3-8b"
+      temperature: 0.7
+      max_tokens: 8192
+
+  virtual:
+    - name: "smart-fallback"
+      upstreams:
+        # Try fast/cheap provider first
+        - name: "groq:llama-3.3-70b-versatile"
+        # Fall back to more capable model if needed
+        - name: "openai:gpt-4o"
+        # Use local model as final fallback
+        - name: "local_qwen"
+  
+  default_model: "smart-fallback"</code></pre>
+                </div>
+
+                <div class="code-example">
+                    <h3>Using Virtual Providers <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></h3>
+                    <pre><code class="language-python">from borgllm import create_llm
+
+# With borg.yml configuration above
+llm = create_llm()  # Uses default "smart-fallback" virtual provider
+
+# Automatically handles:
+# - Rate limits (switches to next provider)
+# - Context window limits (uses appropriate model)
+# - Provider failures (seamless fallback)
+response = llm.invoke([HumanMessage(content="Write a detailed analysis...")])
+print(response.content)</code></pre>
+                </div>
+
+                <div class="examples-cta">
+                    <a href="https://github.com/omarkamali/borgllm/tree/master/examples" class="btn btn-primary">
+                        📂 See More Examples
+                    </a>
+                    <p class="examples-description">
+                        Explore comprehensive examples including custom providers, virtual providers, API key rotation,
+                        and advanced configurations.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://github.com/omarkamali/borgllm">GitHub</a>
+                <a href="/docs/">Documentation</a>
+                <a href="https://pypi.org/project/borgllm/">PyPI</a>
+                <a href="https://github.com/omarkamali/borgllm/blob/master/LICENSE">MIT License</a>
+                <a href="https://github.com/omarkamali/borgllm/blob/master/CONTRIBUTING.md">Contributing</a>
+                <a href="https://github.com/omarkamali/borgllm/issues">Issues</a>
+            </div>
+            <div class="copyright">
+                Copyright © 2025 <a href="https://omarkama.li" style="color: #00ff7f;">Omar Kamali</a>. All rights
+                reserved.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize syntax highlighting
+        hljs.highlightAll();
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add fade-in animation to elements when they come into view
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fadeInUp');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all features
+        document.querySelectorAll('.feature').forEach(feature => {
+            observer.observe(feature);
+        });
+
+        // Animate provider:model switching
+        const providerModels = [
+            'openai:gpt-4o',
+            'anthropic:claude-sonnet-4',
+            'google:gemini-2.5-pro',
+            'groq:llama-3.3-70b-versatile',
+            'deepseek:deepseek-chat',
+            'mistralai:mistral-large-latest',
+            'cerebras:qwen-3-32b',
+            'perplexity:llama-3.1-sonar-large-online',
+            'openrouter:qwen/qwen3-32b',
+            'cohere:command-r-plus'
+        ];
+
+        let currentIndex = 0;
+
+        function switchProviderModel() {
+            const providerModelElement = document.getElementById('provider-model');
+
+            if (providerModelElement) {
+                providerModelElement.style.opacity = '0.3';
+
+                setTimeout(() => {
+                    currentIndex = (currentIndex + 1) % providerModels.length;
+                    const newModel = providerModels[currentIndex];
+
+                    providerModelElement.textContent = newModel;
+
+                    providerModelElement.style.opacity = '1';
+                }, 300);
+            } else {
+                const heroCode = document.getElementById('hero-code');
+                if (heroCode) {
+                    let currentHtml = heroCode.innerHTML;
+                    currentIndex = (currentIndex + 1) % providerModels.length;
+                    const newModel = providerModels[currentIndex];
+
+                    const regex = /(<span class="hljs-string">")([^"]+)("<\/span>)/;
+                    if (currentHtml.match(regex)) {
+                        const newContent = currentHtml.replace(regex, `$1<span id='provider-model' style='color: #00ff7f; font-weight: 600; transition: opacity 0.3s ease;'>${newModel}</span>$3`);
+                        heroCode.innerHTML = newContent;
+                    }
+                }
+            }
+        }
+
+        const startProviderAnimation = () => {
+            setTimeout(() => {
+                const providerModelElement = document.getElementById('provider-model');
+
+                if (!providerModelElement) {
+                    const heroCode = document.getElementById('hero-code');
+                    if (heroCode) {
+                        let content = heroCode.innerHTML;
+                        const modelRegex = /(<span class="hljs-string">")([^"]+)("<\/span>)/;
+                        const match = content.match(modelRegex);
+                        if (match && match[2].includes(':')) {
+                            content = content.replace(modelRegex, `$1<span id='provider-model' style='color: #00ff7f; font-weight: 600; transition: opacity 0.3s ease;'>${match[2]}</span>$3`);
+                            heroCode.innerHTML = content;
+                        }
+                    }
+                }
+
+                setInterval(switchProviderModel, 3000);
+            }, 1000);
+        };
+
+        function copyModel(modelName) {
+            navigator.clipboard.writeText(modelName).then(() => {
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = '✅';
+                button.style.background = 'rgba(0, 255, 127, 0.3)';
+
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                }, 1000);
+            }).catch(() => {
+                const textArea = document.createElement('textarea');
+                textArea.value = modelName;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = '✅';
+                button.style.background = 'rgba(0, 255, 127, 0.3)';
+
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                }, 1000);
+            });
+        }
+
+        function copyHeroCode() {
+            const heroCodeElement = document.getElementById('hero-code');
+            if (heroCodeElement) {
+                const code = heroCodeElement.textContent;
+                navigator.clipboard.writeText(code).then(() => {
+                    const button = event.target;
+                    const originalText = button.textContent;
+                    button.textContent = '✅ Copied!';
+                    button.style.background = 'rgba(0, 255, 127, 0.3)';
+
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.style.background = '';
+                    }, 1500);
+                }).catch(() => {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = code;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+
+                    const button = event.target;
+                    const originalText = button.textContent;
+                    button.textContent = '✅ Copied!';
+                    button.style.background = 'rgba(0, 255, 127, 0.3)';
+
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.style.background = '';
+                    }, 1500);
+                });
+            }
+        }
+
+        function copyCode(button) {
+            const codeElement = button.closest('.code-example').querySelector('code');
+            if (codeElement) {
+                const code = codeElement.textContent;
+                navigator.clipboard.writeText(code).then(() => {
+                    const originalText = button.textContent;
+                    button.textContent = '✅ Copied!';
+                    button.style.background = 'rgba(0, 255, 127, 0.3)';
+
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.style.background = '';
+                    }, 1500);
+                }).catch(() => {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = code;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+
+                    const originalText = button.textContent;
+                    button.textContent = '✅ Copied!';
+                    button.style.background = 'rgba(0, 255, 127, 0.3)';
+
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.style.background = '';
+                    }, 1500);
+                });
+            }
+        }
+
+        const allProviders = [
+            { provider: 'anthropic', model: 'anthropic:claude-3-5-sonnet-20240620', description: 'Specific dated version of Claude 3.5 Sonnet.' },
+            { provider: 'anthropic', model: 'anthropic:claude-3.7-sonnet', description: 'A powerful, general-purpose model with hybrid reasoning.' },
+            { provider: 'anthropic', model: 'anthropic:claude-sonnet-4', description: 'Balanced model with strong capabilities for demanding applications.' },
+            { provider: 'anyscale', model: 'anyscale:qwen/qwen3-32b', description: 'Qwen3 32B model on Anyscale.' },
+            { provider: 'cerebras', model: 'cerebras:qwen-3-32b', description: 'Qwen 3 32B model on Cerebras infrastructure.' },
+            { provider: 'cohere', model: 'cohere:command-r-plus', description: 'Cohere\'s latest command model.' },
+            { provider: 'deepinfra', model: 'deepinfra:qwen/qwen3-32b', description: 'Qwen3 32B model on DeepInfra.' },
+            { provider: 'deepseek', model: 'deepseek:deepseek-chat', description: 'DeepSeek\'s latest chat model aka V3.' },
+            { provider: 'deepseek', model: 'deepseek:deepseek-reasoner', description: 'DeepSeek\'s latest reasoning model aka R1.' },
+            { provider: 'featherless', model: 'featherless:meta-llama/Meta-Llama-3.1-8B-Instruct', description: 'Meta Llama 3.1 8B Instruct model on Featherless.' },
+            { provider: 'fireworks', model: 'fireworks:qwen/qwen3-32b', description: 'Qwen3 32B model on Fireworks AI.' },
+            { provider: 'google', model: 'google:gemini-2.5-flash', description: 'Optimized for speed and high-volume, real-time applications.' },
+            { provider: 'google', model: 'google:gemini-2.5-flash-lite', description: 'Most cost-efficient and fastest in the 2.5 series.' },
+            { provider: 'google', model: 'google:gemini-2.5-pro', description: 'Google\'s most capable model for complex tasks.' },
+            { provider: 'groq', model: 'groq:llama-3.1-8b-instant', description: 'Faster, smaller Llama 3.1 model.' },
+            { provider: 'groq', model: 'groq:llama-3.3-70b-versatile', description: 'Llama 3.3, optimized for speed on Groq hardware.' },
+            { provider: 'groq', model: 'groq:mixtral-8x22b-instruct', description: 'Mixture-of-Experts model for efficiency and performance.' },
+            { provider: 'mistralai', model: 'mistralai:devstral-small-latest', description: 'Mistral\'s agentic model.' },
+            { provider: 'mistralai', model: 'mistralai:ministral-3b-latest', description: 'Mistral\'s tiny model.' },
+            { provider: 'mistralai', model: 'mistralai:mistral-large-latest', description: 'Mistral\'s latest large model.' },
+            { provider: 'mistralai', model: 'mistralai:mistral-medium-latest', description: 'Mistral\'s latest medium model.' },
+            { provider: 'mistralai', model: 'mistralai:mistral-small-latest', description: 'Mistral\'s latest small model.' },
+            { provider: 'novita', model: 'novita:qwen/qwen3-32b', description: 'Qwen3 32B model on Novita AI.' },
+            { provider: 'openai', model: 'openai:gpt-4.1', description: 'A key rolling update/specific version in 2025.' },
+            { provider: 'openai', model: 'openai:gpt-4.1-mini', description: 'Smaller variant of GPT-4.1.' },
+            { provider: 'openai', model: 'openai:gpt-4.1-nano', description: 'Even smaller, highly efficient GPT-4.1 model.' },
+            { provider: 'openai', model: 'openai:gpt-4o', description: 'OpenAI\'s latest flagship multimodal model.' },
+            { provider: 'openai', model: 'openai:gpt-4o-mini', description: 'A compact and faster version of GPT-4o.' },
+            { provider: 'openai', model: 'openai:o3', description: 'Focus on advanced reasoning and complex tasks.' },
+            { provider: 'openai', model: 'openai:o3-mini', description: 'Smaller, faster version of O3.' },
+            { provider: 'openai', model: 'openai:o4-mini-high', description: 'High reasoning budget, great for advanced tasks.' },
+            { provider: 'openrouter', model: 'openrouter:minimax/minimax-m1', description: 'MiniMax M1 model available via OpenRouter.' },
+            { provider: 'openrouter', model: 'openrouter:mistralai/mistral-7b-instruct', description: 'Mistral 7B Instruct model via OpenRouter.' },
+            { provider: 'openrouter', model: 'openrouter:qwen/qwen3-30b-a3b', description: 'Qwen3 30B A3B model available via OpenRouter.' },
+            { provider: 'openrouter', model: 'openrouter:qwen/qwen3-32b', description: 'Qwen3 32B model available via OpenRouter.' },
+            { provider: 'openrouter', model: 'openrouter:qwen/qwq-32b:free', description: 'Free version of QwQ 32B via OpenRouter.' },
+            { provider: 'perplexity', model: 'perplexity:llama-3-sonar-small-32k-online', description: 'Default Llama 3 Sonar model with 32k context and online access.' },
+            { provider: 'perplexity', model: 'perplexity:llama-3.1-70b-instruct', description: 'Llama 3.1 70B instruct model from Perplexity.' },
+            { provider: 'perplexity', model: 'perplexity:llama-3.1-sonar-large-online', description: 'Perplexity\'s premium research-focused model with web access.' },
+            { provider: 'perplexity', model: 'perplexity:llama-3.1-sonar-small-online', description: 'Smaller, faster online model from Perplexity.' },
+            { provider: 'qwen', model: 'qwen:qwen3-32b', description: 'Qwen3 32B model directly from Qwen.' },
+            { provider: 'togetherai', model: 'togetherai:qwen/qwen3-32b', description: 'Qwen3 32B model on Together AI.' }
+        ];
+
+        const providerMetadata = {
+            anthropic: { name: 'Anthropic', domain: 'anthropic.com' },
+            anyscale: { name: 'Anyscale', domain: 'anyscale.com' },
+            cerebras: { name: 'Cerebras', domain: 'cerebras.ai' },
+            cohere: { name: 'Cohere', domain: 'cohere.com' },
+            deepinfra: { name: 'DeepInfra', domain: 'deepinfra.com' },
+            deepseek: { name: 'DeepSeek', domain: 'deepseek.com' },
+            featherless: { name: 'Featherless', domain: 'featherless.ai' },
+            fireworks: { name: 'Fireworks', domain: 'fireworks.ai' },
+            google: { name: 'Google', domain: 'google.com' },
+            groq: { name: 'Groq', domain: 'groq.com' },
+            mistralai: { name: 'Mistral AI', domain: 'mistral.ai' },
+            novita: { name: 'Novita', domain: 'novita.ai' },
+            openai: { name: 'OpenAI', domain: 'openai.com' },
+            openrouter: { name: 'OpenRouter', domain: 'openrouter.ai' },
+            perplexity: { name: 'Perplexity', domain: 'perplexity.ai' },
+            qwen: { name: 'Qwen', domain: 'qwen.ai' },
+            togetherai: { name: 'Together AI', domain: 'together.ai' },
+        };
+
+        function getProviderIcon(providerKey) {
+            const config = providerMetadata[providerKey];
+            if (config && config.domain) {
+                return `<img src="https://www.google.com/s2/favicons?domain=${config.domain}&sz=32" alt="${config.name}" class="provider-icon-img" onerror="this.style.display='none';this.parentNode.innerHTML='🤖'">`;
+            }
+            return '🤖';
+        }
+
+        function getProviderName(providerKey) {
+            const config = providerMetadata[providerKey];
+            return config ? config.name : providerKey;
+        }
+
+        let filteredProviders = [...allProviders];
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        function renderTable() {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const currentProviders = filteredProviders.slice(startIndex, endIndex);
+
+            const tbody = document.querySelector('.providers-table tbody');
+            tbody.innerHTML = '';
+
+            currentProviders.forEach(provider => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="provider-name">${getProviderIcon(provider.provider)} ${getProviderName(provider.provider)}</td>
+                    <td class="model-cell"><code class="copyable" onclick="copyModel('${provider.model}')">${provider.model}</code></td>
+                    <td>${provider.description}</td>
+                    <td><button class="copy-btn-small" onclick="copyModel('${provider.model}')">📋</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            updatePagination();
+        }
+
+        function updatePagination() {
+            const totalItems = filteredProviders.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            const startItem = (currentPage - 1) * itemsPerPage + 1;
+            const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+
+            document.getElementById('pagination-info').textContent = `Showing ${startItem}-${endItem} of ${totalItems} models`;
+
+            const prevBtn = document.getElementById('prev-page');
+            const nextBtn = document.getElementById('next-page');
+
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+
+            const pageNumbers = document.getElementById('page-numbers');
+            pageNumbers.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.className = `page-number ${i === currentPage ? 'active' : ''}`;
+                    pageBtn.textContent = i;
+                    pageBtn.onclick = () => {
+                        currentPage = i;
+                        renderTable();
+                    };
+                    pageNumbers.appendChild(pageBtn);
+                } else if (i === currentPage - 2 && i > 1) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.textContent = '...';
+                    ellipsis.style.color = '#a1a1aa';
+                    ellipsis.style.padding = '8px';
+                    pageNumbers.appendChild(ellipsis);
+                } else if (i === currentPage + 2 && i < totalPages) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.textContent = '...';
+                    ellipsis.style.color = '#a1a1aa';
+                    ellipsis.style.padding = '8px';
+                    pageNumbers.appendChild(ellipsis);
+                }
+            }
+        }
+
+        function changePage(direction) {
+            const totalPages = Math.ceil(filteredProviders.length / itemsPerPage);
+            const newPage = currentPage + direction;
+
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                renderTable();
+            }
+        }
+
+        function filterProviders(providerType) {
+            if (providerType === 'all') {
+                filteredProviders = [...allProviders];
+            } else {
+                filteredProviders = allProviders.filter(item => item.provider === providerType);
+            }
+
+            currentPage = 1;
+            renderTable();
+
+            document.querySelectorAll('.filter-pill').forEach(pill => {
+                pill.classList.remove('active');
+            });
+            document.querySelector(`[data-provider="${providerType}"]`).classList.add('active');
+        }
+
+        function initializeFilterPills() {
+            const filterPillsContainer = document.querySelector('.filter-pills');
+            filterPillsContainer.innerHTML = '';
+
+            const allButton = document.createElement('button');
+            allButton.className = 'filter-pill';
+            allButton.dataset.provider = 'all';
+            allButton.textContent = 'All';
+            allButton.addEventListener('click', () => {
+                filterProviders('all');
+            });
+            filterPillsContainer.appendChild(allButton);
+
+            const uniqueProviders = [...new Set(allProviders.map(item => item.provider))];
+            uniqueProviders.sort((a, b) => getProviderName(a).localeCompare(getProviderName(b)));
+
+            uniqueProviders.forEach(providerKey => {
+                const button = document.createElement('button');
+                button.className = 'filter-pill';
+                button.dataset.provider = providerKey;
+                button.innerHTML = `${getProviderIcon(providerKey)} ${getProviderName(providerKey)}`;
+                button.addEventListener('click', () => {
+                    filterProviders(providerKey);
+                });
+                filterPillsContainer.appendChild(button);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeFilterPills();
+            renderTable();
+            startProviderAnimation();
+        });
+    </script>
+</body>
+
+</html>

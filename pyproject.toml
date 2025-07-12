@@ -1,0 +1,59 @@
+[project]
+name = "borgllm"
+version = "1.0.2"
+description = "Zero config LangChain-compatible LLM client, handles API key rotation, rate limit management, and custom fallback strategies."
+authors = [
+    {name = "Omar Kamali", email = "borgllm@omarkama.li"},
+]
+dependencies = [
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.0.0,!=1.*",
+    "tiktoken>=0.9.0",
+    "furl>=2.1.3",
+    "langchain~=0.3.0",
+    "langchain-openai~=0.3.0",
+    "langchain-core>=0.3.68,<0.4.0",
+    "langsmith>=0.4.5,<0.5.0",
+    "openai>=1.0.0",
+    "toml>=0.10.2",
+    "hatch (>=1.14.1,<2.0.0)",
+]
+requires-python = ">=3.9,<4.0"
+readme = "README.md"
+license = {text = "MIT"}
+
+[dependency-groups]
+test = [
+    "pytest>=7.0.0",
+    "pytest-mock>=3.10.0",
+    "pytest-asyncio>=0.21.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/borgllm"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/examples",
+    "/tests",
+    "/README.md",
+]
+
+[tool.hatch.envs.default]
+
+[tool.hatch.envs.default.scripts]
+publish = "./scripts/publish.sh"
+docs = "sphinx-build -b html docs/source docs/build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto" 
