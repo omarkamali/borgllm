@@ -2,6 +2,9 @@
 
 **BorgLLM** is a Python library that facilitates the integration and management of Large Language Models (LLMs). It offers a unified, LangChain-compatible interface, supporting features such as automatic API key rotation, rate limit handling, and configurable provider fallback strategies.
 
+## Latest Updates
+- 🆕 Moonshot AI support added with model `moonshot:kimi-k2-0711-preview` (Kimi K2 1T MoE model with strong agentic capabilities) and others.
+
 ## ✨ Key Features
 
 - **🔄 Unified Interface**: Single API for multiple LLM providers
@@ -133,6 +136,7 @@ Supported providers:
 | Google        | `google`       | `GOOGLE_API_KEY`                  | `GOOGLE_API_KEYS`                    |
 | Groq          | `groq`         | `GROQ_API_KEY`                    | `GROQ_API_KEYS`                      |
 | Mistral AI    | `mistralai`    | `MISTRALAI_API_KEY`               | `MISTRALAI_API_KEYS`                 |
+| Moonshot AI   | `moonshot`     | `MOONSHOT_API_KEY`                | `MOONSHOT_API_KEYS`                  |
 | Novita        | `novita`       | `NOVITA_API_KEY`                  | `NOVITA_API_KEYS`                    |
 | OpenAI        | `openai`       | `OPENAI_API_KEY`                  | `OPENAI_API_KEYS`                    |
 | OpenRouter    | `openrouter`   | `OPENROUTER_API_KEY`              | `OPENROUTER_API_KEYS`                |
@@ -162,6 +166,7 @@ This list includes both built-in models and some popular choices available throu
 | `mistralai`   | `mistralai:mistral-large-latest`              | Mistral's latest large model.                                        |
 | `mistralai`   | `mistralai:mistral-medium-latest`             | Mistral's latest medium model.                                       |
 | `mistralai`   | `mistralai:mistral-small-latest`              | Mistral's latest small model.                                        |
+| `moonshot`    | `moonshot:kimi-k2-0711-preview`               | Moonshot's Kimi K2 1T MoE model with strong agentic capabilities.    |
 | `openai`      | `openai:gpt-4.1`                              | A key rolling update/specific version in 2025.                       |
 | `openai`      | `openai:gpt-4.1-mini`                         | Smaller variant of GPT-4.1.                                          |
 | `openai`      | `openai:gpt-4.1-nano`                         | Even smaller, highly efficient GPT-4.1 model.                        |

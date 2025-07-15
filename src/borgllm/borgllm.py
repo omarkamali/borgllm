@@ -141,6 +141,12 @@ BUILTIN_PROVIDERS = {
         "default_model": "gemini-2.5-flash",
         "max_tokens": 32768,
     },
+    "moonshot": {
+        "base_url": "https://api.moonshot.ai/v1",
+        "api_key_env": "MOONSHOT_API_KEY",
+        "default_model": "kimi-k2-0711-preview",
+        "max_tokens": 131072,
+    },
 }
 
 

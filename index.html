@@ -1035,6 +1035,7 @@ print(response.content)</code></pre>
         const providerModels = [
             'openai:gpt-4o',
             'anthropic:claude-sonnet-4',
+            'moonshot:kimi-k2-0711-preview',
             'google:gemini-2.5-pro',
             'groq:llama-3.3-70b-versatile',
             'deepseek:deepseek-chat',
@@ -1042,7 +1043,7 @@ print(response.content)</code></pre>
             'cerebras:qwen-3-32b',
             'perplexity:llama-3.1-sonar-large-online',
             'openrouter:qwen/qwen3-32b',
-            'cohere:command-r-plus'
+            'cohere:command-r-plus',
         ];
 
         let currentIndex = 0;
@@ -1220,6 +1221,7 @@ print(response.content)</code></pre>
             { provider: 'mistralai', model: 'mistralai:mistral-large-latest', description: 'Mistral\'s latest large model.' },
             { provider: 'mistralai', model: 'mistralai:mistral-medium-latest', description: 'Mistral\'s latest medium model.' },
             { provider: 'mistralai', model: 'mistralai:mistral-small-latest', description: 'Mistral\'s latest small model.' },
+            { provider: 'moonshot', model: 'moonshot:kimi-k2-0711-preview', description: 'Moonshot\'s Kimi K2 1T MoE model with strong agentic capabilities.' },
             { provider: 'novita', model: 'novita:qwen/qwen3-32b', description: 'Qwen3 32B model on Novita AI.' },
             { provider: 'openai', model: 'openai:gpt-4.1', description: 'A key rolling update/specific version in 2025.' },
             { provider: 'openai', model: 'openai:gpt-4.1-mini', description: 'Smaller variant of GPT-4.1.' },
@@ -1254,6 +1256,7 @@ print(response.content)</code></pre>
             google: { name: 'Google', domain: 'google.com' },
             groq: { name: 'Groq', domain: 'groq.com' },
             mistralai: { name: 'Mistral AI', domain: 'mistral.ai' },
+            moonshot: { name: 'Moonshot AI', domain: 'moonshot.ai' },
             novita: { name: 'Novita', domain: 'novita.ai' },
             openai: { name: 'OpenAI', domain: 'openai.com' },
             openrouter: { name: 'OpenRouter', domain: 'openrouter.ai' },
