@@ -52,6 +52,12 @@ To run any of these examples:
 - **Key Functionality**: `signal_429`, automatic provider avoidance, cooldown expiration.
 - **Requires `.env`**: Yes (for `GROQ_API_KEY`, `CEREBRAS_API_KEY` or equivalent keys for custom providers)
 
+### 8. [Configurable Cooldown and Timeout (`configurable_cooldown_timeout/main.py`)](configurable_cooldown_timeout/main.py)
+- **Purpose**: Shows how to configure custom cooldown periods and request timeouts globally, for specific providers, or for specific `provider:model` combinations.
+- **Uses `borg.yaml`**: Yes (`configurable_cooldown_timeout/borg.yaml`)
+- **Key Functionality**: `cooldown` and `timeout` parameters in `create_llm()`, `set_cooldown_config()`, `set_timeout_config()`, and how these affect provider selection and rate limit handling.
+- **Requires `.env`**: Optional (for `OPENAI_API_KEY` if running examples that make actual API calls; dummy providers are used if not present).
+
 ### 9. [Virtual Provider Await Cooldown (`virtual_provider_await_cooldown/main.py`)](virtual_provider_await_cooldown/main.py)
 - **Purpose**: Shows how a virtual provider can optionally await a blocked upstream's cooldown period to expire before returning a provider. Includes a scenario for timeout.
 - **Uses `borg.yaml`**: No (uses programmatic configuration for a temporary virtual provider)

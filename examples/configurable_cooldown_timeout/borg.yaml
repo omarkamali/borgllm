@@ -1,0 +1,19 @@
+llm:
+  providers:
+    - name: "test-provider-1"
+      base_url: "https://test1.api/v1"
+      model: "model-alpha"
+      api_key: "dummy-key-1"
+      max_tokens: 4000
+
+    - name: "test-provider-2"
+      base_url: "https://test2.api/v1"
+      model: "model-beta"
+      api_key: "dummy-key-2"
+      max_tokens: 8000
+
+  virtual:
+    - name: "virtual-test-provider"
+      upstreams:
+        - name: "test-provider-1"
+        - name: "test-provider-2" 

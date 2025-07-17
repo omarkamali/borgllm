@@ -249,7 +249,7 @@ llm:
         # This virtual provider will first use groq which has a max context window of 6k tokens
         - name: "groq:qwen/qwen3-32b"
         # If a request exceeds 6k tokens or groq's rate limit is reached, it will use cerebras
-        # which has a max context window of 32k tokens but is limited to 1M tokens per day.
+        # which has a max context window of 64k tokens but is limited to 1M tokens per day.
         - name: "cerebras:qwen-3-32b"
         # If both are exhausted, it will use the local qwen model as a fallback until either is available again.
         - name: "local_qwen"
@@ -338,6 +338,15 @@ This comprehensive approach ensures your application gracefully handles rate lim
 For example, you can choose a cheap provider who provides a small context window, and use a more expensive provider who provides a larger context window as a fallback if the request is too large. Or a cheap and unreliable provider coupled with a more reliable one.
 
 You can also use virtual providers recursively to create an even more complex fallback strategy declaratively without modifying your application code.
+
+#### Configurable Cooldown and Timeout
+
+BorgLLM allows you to configure cooldown periods (after a 429 rate limit error) and general request timeouts directly via the `create_llm` function or programmatically. This provides fine-grained control over how BorgLLM handles temporary provider unavailability.
+
+- **Global Cooldown/Timeout**: Apply a single duration to all providers.
+- **Provider-Specific Cooldown/Timeout**: Define different durations for individual providers or even specific models (`provider:model`).
+
+For detailed examples and usage, see the [Configurable Cooldown and Timeout Example](examples/configurable_cooldown_timeout/main.py).
 
 
 ### 🆘 Troubleshooting & Common Errors

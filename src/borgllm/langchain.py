@@ -232,6 +232,8 @@ def create_llm(
     config_file: str = "borg.yaml",
     initial_config_data: Optional[Dict[str, Any]] = None,
     overrides: Optional[Dict[str, Any]] = None,
+    cooldown: Optional[Union[int, Dict[str, int]]] = None,
+    timeout: Optional[Union[float, Dict[str, float]]] = None,
     **kwargs,
 ) -> BorgLLMLangChainClient:
     """
@@ -242,6 +244,12 @@ def create_llm(
         config_file: Path to the BorgLLM configuration file.
         initial_config_data: Optional initial configuration data as dictionary.
         overrides: Optional dictionary of settings to override.
+        cooldown: Optional cooldown configuration. Can be:
+            - int: Global cooldown duration in seconds for all providers (default: 60)
+            - dict: Provider-specific cooldown durations, e.g., {"openai:gpt-4o": 120, "default": 60}
+        timeout: Optional timeout configuration. Can be:
+            - float: Global timeout duration in seconds for all operations
+            - dict: Provider-specific timeout durations, e.g., {"openai:gpt-4o": 30.0, "default": 60.0}
         **kwargs: Additional arguments passed to the LangChain client
 
     Returns:
@@ -250,6 +258,13 @@ def create_llm(
     borgllm_config_instance = BorgLLM.get_instance(
         config_path=config_file, initial_config_data=initial_config_data
     )
+
+    # Set cooldown and timeout configurations if provided
+    if cooldown is not None:
+        borgllm_config_instance.set_cooldown_config(cooldown)
+    if timeout is not None:
+        borgllm_config_instance.set_timeout_config(timeout)
+
     return BorgLLMLangChainClient(
         borgllm_config=borgllm_config_instance,
         provider_name=provider_name,

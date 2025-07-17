@@ -63,5 +63,5 @@ fi
 # Create the GitHub release
 gh release create "v$VERSION" --generate-notes --title "BorgLLM v$VERSION"
 
-echo "🎉 BorgLLM publish process completed successfully!
+echo "🎉 BorgLLM publish process completed successfully!"
 echo "✨ GitHub Release v$VERSION created successfully!" 

@@ -256,6 +256,10 @@ class BorgLLM:
             self._unusable_providers: Dict[str, float] = {}
         if not hasattr(self, "_virtual_provider_last_index") or _force_reinitialize:
             self._virtual_provider_last_index: Dict[str, int] = {}
+        if not hasattr(self, "_cooldown_config") or _force_reinitialize:
+            self._cooldown_config: Union[int, Dict[str, int]] = 60  # Default 60 seconds
+        if not hasattr(self, "_timeout_config") or _force_reinitialize:
+            self._timeout_config: Optional[Union[float, Dict[str, float]]] = None
 
         if BorgLLM._config_initialized and not _force_reinitialize:
             logger.debug("BorgLLM already initialized, skipping re-initialization.")
@@ -360,6 +364,86 @@ class BorgLLM:
             logger.info(
                 f"Instance default LLM provider set to '{provider_name}' (overrides any config file default)."
             )
+
+    def set_cooldown_config(self, cooldown: Union[int, Dict[str, int]]):
+        """Set the cooldown configuration for providers.
+
+        Args:
+            cooldown: Either a global cooldown duration in seconds, or a dict mapping
+                     provider names to specific cooldown durations. The dict can include
+                     a "default" key for providers not explicitly listed.
+        """
+        with self._lock:
+            self._cooldown_config = cooldown
+            logger.info(f"Cooldown configuration updated: {cooldown}")
+
+    def set_timeout_config(self, timeout: Union[float, Dict[str, float]]):
+        """Set the timeout configuration for providers.
+
+        Args:
+            timeout: Either a global timeout duration in seconds, or a dict mapping
+                    provider names to specific timeout durations. The dict can include
+                    a "default" key for providers not explicitly listed.
+        """
+        with self._lock:
+            self._timeout_config = timeout
+            logger.info(f"Timeout configuration updated: {timeout}")
+
+    def get_cooldown_duration(self, provider_name: str) -> int:
+        """Get the cooldown duration for a specific provider.
+
+        Args:
+            provider_name: Name of the provider (may include model, e.g., "openai:gpt-4o")
+
+        Returns:
+            Cooldown duration in seconds
+        """
+        if isinstance(self._cooldown_config, int):
+            return self._cooldown_config
+        elif isinstance(self._cooldown_config, dict):
+            # Check for exact provider match first
+            if provider_name in self._cooldown_config:
+                return self._cooldown_config[provider_name]
+            # Check for provider key match (e.g., "openai" from "openai:gpt-4o")
+            if ":" in provider_name:
+                provider_key = provider_name.split(":", 1)[0]
+                if provider_key in self._cooldown_config:
+                    return self._cooldown_config[provider_key]
+            # Fall back to default if specified
+            if "default" in self._cooldown_config:
+                return self._cooldown_config["default"]
+            # Final fallback to global default
+            return 60
+        return 60
+
+    def get_timeout_duration(self, provider_name: str) -> Optional[float]:
+        """Get the timeout duration for a specific provider.
+
+        Args:
+            provider_name: Name of the provider (may include model, e.g., "openai:gpt-4o")
+
+        Returns:
+            Timeout duration in seconds, or None if no timeout is configured
+        """
+        if self._timeout_config is None:
+            return None
+        elif isinstance(self._timeout_config, (int, float)):
+            return float(self._timeout_config)
+        elif isinstance(self._timeout_config, dict):
+            # Check for exact provider match first
+            if provider_name in self._timeout_config:
+                return self._timeout_config[provider_name]
+            # Check for provider key match (e.g., "openai" from "openai:gpt-4o")
+            if ":" in provider_name:
+                provider_key = provider_name.split(":", 1)[0]
+                if provider_key in self._timeout_config:
+                    return self._timeout_config[provider_key]
+            # Fall back to default if specified
+            if "default" in self._timeout_config:
+                return self._timeout_config["default"]
+            # No timeout configured for this provider
+            return None
+        return None
 
     def _get_config_paths(self, base_path: str) -> List[str]:
         if base_path.endswith((".yaml", ".yml")):
@@ -518,9 +602,22 @@ class BorgLLM:
             )
             self._config = LLMConfig(providers=[], virtual=[], default_model=None)
 
-    def signal_429(self, provider_name: str, duration: int = 300):
+    def signal_429(self, provider_name: str, duration: Optional[int] = None):
+        """Signal that a provider received a 429 error and should be put on cooldown.
+
+        Args:
+            provider_name: Name of the provider that received the 429 error
+            duration: Optional specific cooldown duration in seconds. If not provided,
+                     uses the configured cooldown duration for this provider.
+        """
+        if duration is None:
+            duration = self.get_cooldown_duration(provider_name)
+
         with self._lock:
             self._unusable_providers[provider_name] = time.time() + duration
+            logger.info(
+                f"Provider '{provider_name}' put on cooldown for {duration} seconds"
+            )
 
     def _is_provider_unusable(self, provider_name: str) -> bool:
         with self._lock:
@@ -556,6 +653,10 @@ class BorgLLM:
                     "No default LLM provider specified and no configuration file found. "
                     "Please specify a provider name in provider:model format, set a default in borg.yaml, or use set_default_provider()."
                 )
+
+        # Use configured timeout if none provided
+        if timeout is None:
+            timeout = self.get_timeout_duration(name)
 
         provider_key = None
         model_name_for_request = None
