@@ -254,57 +254,66 @@ def test_virtual_provider_token_approximation():
 
 
 def test_virtual_provider_round_robin():
-    try:
-        _create_dummy_files(COMMON_DUMMY_CONFIG_CONTENT, COMMON_DUMMY_ENV_CONTENT)
-        with patch.dict(
-            os.environ,
-            {
-                "OPENAI_API_KEY": "test_openai_key",
-                "ANTHROPIC_API_KEY": "test_anthropic_key",
-                "CEREBRAS_API_KEY": "test_cerebras_key",
-                "GROQ_API_KEY": "test_groq_key",
-            },
-            clear=True,
-        ):
-            # Use get_instance with _force_reinitialize
-            provider = BorgLLM.get_instance(config_path=TEST_CONFIG_PATH)
+    # Mock time for this test - patch both time module and borgllm module
+    mock_time = MockTime(initial_time=200.0)
+    with (
+        patch("time.time", mock_time.time),
+        patch("time.sleep", mock_time.sleep),
+        patch("borgllm.borgllm.time.time", mock_time.time),
+        patch("borgllm.borgllm.time.sleep", mock_time.sleep),
+        patch("borgllm.langchain.time.sleep", mock_time.sleep),
+    ):
+        try:
+            _create_dummy_files(COMMON_DUMMY_CONFIG_CONTENT, COMMON_DUMMY_ENV_CONTENT)
+            with patch.dict(
+                os.environ,
+                {
+                    "OPENAI_API_KEY": "test_openai_key",
+                    "ANTHROPIC_API_KEY": "test_anthropic_key",
+                    "CEREBRAS_API_KEY": "test_cerebras_key",
+                    "GROQ_API_KEY": "test_groq_key",
+                },
+                clear=True,
+            ):
+                # Use get_instance with _force_reinitialize
+                provider = BorgLLM.get_instance(config_path=TEST_CONFIG_PATH)
 
-            # After the change to deterministic selection, it should consistently return the first available
-            # For 'qwen-dense', it should always pick 'qwen-dense_c' first
-            p1 = provider.get("qwen-dense")
-            assert p1.name == "qwen-dense_c"
+                # After the change to deterministic selection, it should consistently return the first available
+                # For 'qwen-dense', it should always pick 'qwen-dense_c' first
+                p1 = provider.get("qwen-dense")
+                assert p1.name == "qwen-dense_c"
 
-            # Signal 429 for qwen-dense_c, then it should pick qwen-dense_g
-            provider.signal_429("qwen-dense_c", duration=1)
-            p2 = provider.get("qwen-dense")
-            assert p2.name == "qwen-dense_g"
+                # Signal 429 for qwen-dense_c, then it should pick qwen-dense_g
+                provider.signal_429("qwen-dense_c", duration=1)
+                p2 = provider.get("qwen-dense")
+                assert p2.name == "qwen-dense_g"
 
-            # After cooldown, it should pick qwen-dense_c again
-            time.sleep(1.1)  # Wait for cooldown to expire
-            p3 = provider.get("qwen-dense")
-            assert p3.name == "qwen-dense_c"
+                # After cooldown, it should pick qwen-dense_c again
+                mock_time.sleep(1.1)  # Wait for cooldown to expire
+                p3 = provider.get("qwen-dense")
+                assert p3.name == "qwen-dense_c"
 
-            # For 'qwen-best', it should try 'qwen-dense' first, which resolves to 'qwen-dense_c'
-            p_best1 = provider.get("qwen-best")
-            assert p_best1.name == "qwen-dense_c"
+                # For 'qwen-best', it should try 'qwen-dense' first, which resolves to 'qwen-dense_c'
+                p_best1 = provider.get("qwen-best")
+                assert p_best1.name == "qwen-dense_c"
 
-            # Signal 429 for qwen-dense_c. qwen-best should still try qwen-dense, which will now resolve to qwen-dense_g.
-            provider.signal_429("qwen-dense_c", duration=1)
-            p_best2 = provider.get("qwen-best")
-            assert p_best2.name == "qwen-dense_g"
+                # Signal 429 for qwen-dense_c. qwen-best should still try qwen-dense, which will now resolve to qwen-dense_g.
+                provider.signal_429("qwen-dense_c", duration=1)
+                p_best2 = provider.get("qwen-best")
+                assert p_best2.name == "qwen-dense_g"
 
-            # Signal 429 for qwen-dense_g. Now qwen-best should pick qwen-moe_s.
-            provider.signal_429("qwen-dense_g", duration=1)
-            p_best3 = provider.get("qwen-best")
-            assert p_best3.name == "qwen-moe_s"
+                # Signal 429 for qwen-dense_g. Now qwen-best should pick qwen-moe_s.
+                provider.signal_429("qwen-dense_g", duration=1)
+                p_best3 = provider.get("qwen-best")
+                assert p_best3.name == "qwen-moe_s"
 
-            # After all cooldowns expire, it should go back to qwen-dense_c (via qwen-dense)
-            time.sleep(1.1)  # Wait for cooldowns to expire
-            p_best4 = provider.get("qwen-best")
-            assert p_best4.name == "qwen-dense_c"
+                # After all cooldowns expire, it should go back to qwen-dense_c (via qwen-dense)
+                mock_time.sleep(1.1)  # Wait for cooldowns to expire
+                p_best4 = provider.get("qwen-best")
+                assert p_best4.name == "qwen-dense_c"
 
-    finally:
-        _cleanup_dummy_files()
+        finally:
+            _cleanup_dummy_files()
 
 
 def test_signal_429_and_cooldown():

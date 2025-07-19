@@ -794,6 +794,16 @@ class BorgLLM:
         start_time = time.time()
 
         while True:
+            # First clear all expired providers to ensure consistent state
+            current_time = time.time()
+            expired_providers = [
+                provider_name
+                for provider_name, cooldown_end in self._unusable_providers.items()
+                if cooldown_end <= current_time
+            ]
+            for provider_name in expired_providers:
+                del self._unusable_providers[provider_name]
+
             all_resolved_upstreams: List[LLMProviderConfig] = []
             min_cooldown_end_time = float("inf")
 
@@ -849,12 +859,14 @@ class BorgLLM:
 
             time_to_wait = min_cooldown_end_time - time.time()
             if time_to_wait <= 0:
+                # Cooldowns have expired, restart the loop to pick up available providers
                 continue
 
             if timeout is not None:
                 time_elapsed = time.time() - start_time
                 remaining_timeout = timeout - time_elapsed
-                if remaining_timeout <= 0:
+                # Use small epsilon to avoid floating point precision issues
+                if remaining_timeout <= 1e-6:
                     earliest_provider = None
                     earliest_time = float("inf")
                     for upstream_info in virtual_config.upstreams:

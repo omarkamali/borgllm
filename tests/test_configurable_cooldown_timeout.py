@@ -604,24 +604,26 @@ class TestEdgeCases:
     def test_concurrent_config_updates(self):
         """Test that concurrent config updates work correctly with threading."""
         import threading
-        import time
 
         borgllm = BorgLLM(_force_reinitialize=True)
+
+        # Use a counter instead of time.sleep to avoid CI hanging
+        counter = [0]
 
         def update_cooldown():
             for i in range(10):
                 borgllm.set_cooldown_config(i * 10)
-                time.sleep(0.01)
+                counter[0] += 1
 
         def update_timeout():
             for i in range(10):
                 borgllm.set_timeout_config(i * 5.0)
-                time.sleep(0.01)
+                counter[0] += 1
 
         def signal_429s():
             for i in range(10):
                 borgllm.signal_429(f"provider_{i}")
-                time.sleep(0.01)
+                counter[0] += 1
 
         # Start concurrent threads
         threads = [
@@ -634,7 +636,10 @@ class TestEdgeCases:
             thread.start()
 
         for thread in threads:
-            thread.join()
+            thread.join(timeout=5.0)  # Add timeout to prevent hanging
+
+        # Ensure all threads completed
+        assert counter[0] == 30, f"Expected 30 operations, got {counter[0]}"
 
         # Test should complete without exceptions
         # Final values should be the last ones set
