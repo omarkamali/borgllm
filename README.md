@@ -1,5 +1,7 @@
 # BorgLLM - LLM Integration and Management
 
+[![BorgLLM Tests](https://github.com/omarkamali/borgllm/actions/workflows/pytest.yml/badge.svg)](https://github.com/omarkamali/borgllm/actions/workflows/pytest.yml)
+
 **BorgLLM** is a Python library that facilitates the integration and management of Large Language Models (LLMs). It offers a unified, LangChain-compatible interface, supporting features such as automatic API key rotation, rate limit handling, and configurable provider fallback strategies.
 
 ## Latest Updates

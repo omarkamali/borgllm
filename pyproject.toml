@@ -1,6 +1,6 @@
 [project]
 name = "borgllm"
-version = "1.0.3"
+version = "1.0.4"
 description = "Zero config LangChain-compatible LLM client, handles API key rotation, rate limit management, and custom fallback strategies."
 authors = [
     {name = "Omar Kamali", email = "borgllm@omarkama.li"},
