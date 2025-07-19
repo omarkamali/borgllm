@@ -730,8 +730,7 @@ class BorgLLM:
                     temperature=settings.get("temperature", 0.7),
                     max_tokens=settings.get("max_tokens", 4096),
                 )
-                with _GLOBAL_BUILTIN_LOCK:
-                    _GLOBAL_BUILTIN_PROVIDERS[provider_key] = builtin_config
+                _GLOBAL_BUILTIN_PROVIDERS[provider_key] = builtin_config
                 return builtin_config
 
         # Handle configured providers
