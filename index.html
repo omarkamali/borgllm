@@ -788,7 +788,7 @@ print(response.content)</code></pre>
         <div class="container">
             <div class="stats-grid">
                 <div class="stat-item">
-                    <div class="stat-number">17+</div>
+                    <div class="stat-number">20+</div>
                     <div class="stat-label">LLM Providers</div>
                 </div>
                 <div class="stat-item">
@@ -854,7 +854,7 @@ print(response.content)</code></pre>
                 <h2 class="section-title">🔌 Supported Providers & Models</h2>
 
                 <div class="providers-intro">
-                    <p>BorgLLM supports 17+ LLM providers out of the box. Click any model to copy it to your clipboard.
+                    <p>BorgLLM supports 20+ LLM providers out of the box. Click any model to copy it to your clipboard.
                     </p>
                     <p>Any model identifier from these providers will also work out of the box, even if it's not listed
                         here.</p>
@@ -1035,15 +1035,18 @@ print(response.content)</code></pre>
         const providerModels = [
             'openai:gpt-4o',
             'anthropic:claude-sonnet-4',
-            'moonshot:kimi-k2-0711-preview',
+            'moonshot:kimi-k2-0905-preview',
             'google:gemini-2.5-pro',
             'groq:llama-3.3-70b-versatile',
             'deepseek:deepseek-chat',
             'mistralai:mistral-large-latest',
             'cerebras:qwen-3-32b',
             'perplexity:llama-3.1-sonar-large-online',
+            'omneity:sawalni-beta',
             'openrouter:qwen/qwen3-32b',
             'cohere:command-r-plus',
+            'zai:zai/glm-4.6',
+            'minimax:minimax-m2',
         ];
 
         let currentIndex = 0;
@@ -1246,7 +1249,10 @@ print(response.content)</code></pre>
             { provider: 'perplexity', model: 'perplexity:llama-3.1-sonar-small-online', description: 'Smaller, faster online model from Perplexity.' },
             { provider: 'qwen', model: 'qwen:qwen3-32b', description: 'Qwen3 32B model directly from Qwen.' },
             { provider: 'omneity', model: 'omneity:sawalni-beta', description: 'Sawalni, a Moroccan-focused agentic LLM from Omneity Labs.' },
-            { provider: 'togetherai', model: 'togetherai:qwen/qwen3-32b', description: 'Qwen3 32B model on Together AI.' }
+            { provider: 'togetherai', model: 'togetherai:qwen/qwen3-32b', description: 'Qwen3 32B model on Together AI.' },
+            { provider: 'zai', model: 'zai:zai/glm-4.6', description: 'Zhipu AI flagship GLM 4.6 model via ZAI.' },
+            { provider: 'zai', model: 'zai:zai/glm-4.5-air', description: 'Lighter performant GLM 4.5 Air via ZAI.' },
+            { provider: 'minimax', model: 'minimax:minimax-m2', description: 'MiniMax M2 for coding and agentic tasks.' }
         ];
 
         const providerMetadata = {
@@ -1269,6 +1275,8 @@ print(response.content)</code></pre>
             qwen: { name: 'Qwen', domain: 'qwen.ai' },
             omneity: { name: 'Omneity Labs', domain: 'omneitylabs.com' },
             togetherai: { name: 'Together AI', domain: 'together.ai' },
+            zai: { name: 'Zhipu AI (ZAI)', domain: 'z.ai' },
+            minimax: { name: 'MiniMax', domain: 'minimax.com' },
         };
 
         function getProviderIcon(providerKey) {

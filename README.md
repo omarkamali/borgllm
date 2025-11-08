@@ -5,7 +5,9 @@
 **BorgLLM** is a Python library that facilitates the integration and management of Large Language Models (LLMs). It offers a unified, LangChain-compatible interface, supporting features such as automatic API key rotation, rate limit handling, and configurable provider fallback strategies.
 
 ## Latest Updates
-- 🆕 Moonshot AI support added with model `moonshot:kimi-k2-0711-preview` (Kimi K2 1T MoE model with strong agentic capabilities) and others.
+- 🆕 ZAI support added with models `zai:zai/glm-4.6` and `zai:zai/glm-4.5-air`.
+- 🆕 MiniMax support added with flagship `minimax:minimax-m2` for coding and agentic tasks.
+- 🆕 Omneity support added with model `omneity:sawalni-beta` (Moroccan-focused agentic LLM).
 
 ## ✨ Key Features
 
@@ -137,15 +139,17 @@ Supported providers:
 | Fireworks     | `fireworks`    | `FIREWORKS_API_KEY`               | `FIREWORKS_API_KEYS`                 |
 | Google        | `google`       | `GOOGLE_API_KEY`                  | `GOOGLE_API_KEYS`                    |
 | Groq          | `groq`         | `GROQ_API_KEY`                    | `GROQ_API_KEYS`                      |
+| MiniMax       | `minimax`      | `MINIMAX_API_KEY`                 | `MINIMAX_API_KEYS`                   |
 | Mistral AI    | `mistralai`    | `MISTRALAI_API_KEY`               | `MISTRALAI_API_KEYS`                 |
 | Moonshot AI   | `moonshot`     | `MOONSHOT_API_KEY`                | `MOONSHOT_API_KEYS`                  |
 | Novita        | `novita`       | `NOVITA_API_KEY`                  | `NOVITA_API_KEYS`                    |
-| Omneity Labs       | `omneity`      | `OMNEITY_API_KEY`                 | `OMNEITY_API_KEYS`                   |
+| Omneity Labs  | `omneity`      | `OMNEITY_API_KEY`                 | `OMNEITY_API_KEYS`                   |
 | OpenAI        | `openai`       | `OPENAI_API_KEY`                  | `OPENAI_API_KEYS`                    |
 | OpenRouter    | `openrouter`   | `OPENROUTER_API_KEY`              | `OPENROUTER_API_KEYS`                |
 | Perplexity    | `perplexity`   | `PERPLEXITY_API_KEY`              | `PERPLEXITY_API_KEYS`                |
 | Qwen          | `qwen`         | `QWEN_API_KEY`                    | `QWEN_API_KEYS`                      |
 | Together AI   | `togetherai`   | `TOGETHERAI_API_KEY`              | `TOGETHERAI_API_KEYS`                |
+| ZAI           | `zai`          | `ZAI_API_KEY`                     | `ZAI_API_KEYS`                       |
 
 This list includes both built-in models and some popular choices available through their respective APIs. You can find the full list of models for each provider on their respective websites.
 
@@ -164,12 +168,18 @@ This list includes both built-in models and some popular choices available throu
 | `groq`        | `groq:llama-3.3-70b-versatile`                | Llama 3.3, optimized for speed on Groq hardware.                     |
 | `groq`        | `groq:llama3-8b-8192`                         | Default Llama 3 8B model.                                            |
 | `groq`        | `groq:mixtral-8x22b-instruct`                 | Mixture-of-Experts model for efficiency and performance.             |
+| `minimax`     | `minimax:minimax-m2`                          | MiniMax M2 for coding and agentic tasks.                              |
 | `mistralai`   | `mistralai:devstral-small-latest`             | Mistral's agentic model.                                             |
 | `mistralai`   | `mistralai:ministral-3b-latest`               | Mistral's tiny model.                                                |
 | `mistralai`   | `mistralai:mistral-large-latest`              | Mistral's latest large model.                                        |
 | `mistralai`   | `mistralai:mistral-medium-latest`             | Mistral's latest medium model.                                       |
 | `mistralai`   | `mistralai:mistral-small-latest`              | Mistral's latest small model.                                        |
-| `moonshot`    | `moonshot:kimi-k2-0711-preview`               | Moonshot's Kimi K2 1T MoE model with strong agentic capabilities.    |
+| `moonshot`    | `moonshot:kimi-k2-0905-preview`               | Moonshot's Kimi K2 1T MoE model with strong agentic capabilities.    |
+| `moonshot`    | `moonshot:kimi-k2-thinking`               | Moonshot's Kimi K2 1T MoE model with strong agentic capabilities.    |
+| `omneity`     | `omneity:sawalni-beta`                        | Sawalni, a Moroccan-focused LLM from Omneity Labs.                                                |
+| `openai`      | `openai:gpt-5`                                | A key rolling update/specific version in 2025.                       |
+| `openai`      | `openai:gpt-5-mini`                           | Smaller variant of GPT-5.                                          |
+| `openai`      | `openai:gpt-5-nano`                           | Even smaller, highly efficient GPT-5 model.                        |
 | `openai`      | `openai:gpt-4.1`                              | A key rolling update/specific version in 2025.                       |
 | `openai`      | `openai:gpt-4.1-mini`                         | Smaller variant of GPT-4.1.                                          |
 | `openai`      | `openai:gpt-4.1-nano`                         | Even smaller, highly efficient GPT-4.1 model.                        |
@@ -187,7 +197,8 @@ This list includes both built-in models and some popular choices available throu
 | `perplexity`  | `perplexity:llama-3.1-70b-instruct`           | Llama 3.1 70B instruct model from Perplexity.                        |
 | `perplexity`  | `perplexity:llama-3.1-sonar-large-online`     | Perplexity's premium research-focused model with web access.         |
 | `perplexity`  | `perplexity:llama-3.1-sonar-small-online`     | Smaller, faster online model from Perplexity.                        |
-| `omneity`     | `omneity:sawalni-beta`                        | Sawalni, a Moroccan-focused LLM from Omneity Labs.                                                |
+| `zai`         | `zai:zai/glm-4.6`                             | Zhipu AI flagship coding and agentic GLM 4.6 via ZAI.                                   |
+| `zai`         | `zai:zai/glm-4.5-air`                         | Lighter but performant GLM 4.5 Air via ZAI.                          |
 
 ### Configuration Prioritization and `borg.yml`
 

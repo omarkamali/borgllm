@@ -153,6 +153,18 @@ BUILTIN_PROVIDERS = {
         "default_model": "sawalni-beta",
         "max_tokens": 8192,
     },
+    "zai": {
+        "base_url": "https://api.z.ai/api/paas/v4",
+        "api_key_env": "ZAI_API_KEY",
+        "default_model": "zai/glm-4.6",
+        "max_tokens": 200000,
+    },
+    "minimax": {
+        "base_url": "https://api.minimax.io/v1",
+        "api_key_env": "MINIMAX_API_KEY",
+        "default_model": "minimax-m2",
+        "max_tokens": 128000,
+    },
 
 }
 
