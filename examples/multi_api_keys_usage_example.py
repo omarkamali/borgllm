@@ -29,11 +29,11 @@ def setup_demo_environment():
     os.environ["OPENAI_API_KEYS"] = "sk-demo-key1,sk-demo-key2,sk-demo-key3"
 
     # Example: Multiple Gemini API keys (built-in provider)
-    os.environ["GEMINI_API_KEYS"] = "gemini-key-1,gemini-key-2"
+    os.environ["GOOGLE_API_KEYS"] = "gemini-key-1,gemini-key-2"
 
     # Single keys (for comparison)
     os.environ["OPENAI_API_KEY"] = "sk-single-key"
-    os.environ["GEMINI_API_KEY"] = "gemini-single-key"
+    os.environ["GOOGLE_API_KEY"] = "gemini-single-key"
 
 
 def demonstrate_config_based_multiple_keys():
@@ -112,8 +112,8 @@ def demonstrate_builtin_provider_multiple_keys():
                 print(f"  Call {i+1}: Error - {e}")
 
     # Test Gemini built-in provider with multiple keys
-    if "GEMINI_API_KEYS" in os.environ:
-        print("\nTesting Google (Gemini) built-in provider with GEMINI_API_KEYS:")
+    if "GOOGLE_API_KEYS" in os.environ:
+        print("\nTesting Google (Gemini) built-in provider with GOOGLE_API_KEYS:")
         for i in range(3):
             try:
                 provider = config.get("google:gemini-2.5-flash")

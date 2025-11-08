@@ -25,15 +25,15 @@ def test_builtin_provider_rotation():
     logger.info("=" * 60)
 
     # Set up test environment variables
-    original_gemini_keys = os.environ.get("GEMINI_API_KEYS")
-    original_gemini_key = os.environ.get("GEMINI_API_KEY")
+    original_gemini_keys = os.environ.get("GOOGLE_API_KEYS")
+    original_gemini_key = os.environ.get("GOOGLE_API_KEY")
 
     try:
         # Set test API keys
-        os.environ["GEMINI_API_KEYS"] = "gemini-key-1,gemini-key-2,gemini-key-3"
-        if "GEMINI_API_KEY" in os.environ:
+        os.environ["GOOGLE_API_KEYS"] = "gemini-key-1,gemini-key-2,gemini-key-3"
+        if "GOOGLE_API_KEY" in os.environ:
             del os.environ[
-                "GEMINI_API_KEY"
+                "GOOGLE_API_KEY"
             ]  # Remove single key to test multi-key precedence
 
         # Test 1: Direct provider calls
@@ -99,12 +99,12 @@ def test_builtin_provider_rotation():
     finally:
         # Restore original environment
         if original_gemini_keys is not None:
-            os.environ["GEMINI_API_KEYS"] = original_gemini_keys
-        elif "GEMINI_API_KEYS" in os.environ:
-            del os.environ["GEMINI_API_KEYS"]
+            os.environ["GOOGLE_API_KEYS"] = original_gemini_keys
+        elif "GOOGLE_API_KEYS" in os.environ:
+            del os.environ["GOOGLE_API_KEYS"]
 
         if original_gemini_key is not None:
-            os.environ["GEMINI_API_KEY"] = original_gemini_key
+            os.environ["GOOGLE_API_KEY"] = original_gemini_key
 
     logger.info("\n" + "=" * 60)
     logger.info("Test completed!")

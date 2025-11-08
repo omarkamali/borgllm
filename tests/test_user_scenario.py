@@ -36,11 +36,11 @@ def test_user_scenario():
     logger.info("=" * 60)
 
     # Set up test environment variables like user's scenario
-    original_gemini_keys = os.environ.get("GEMINI_API_KEYS")
+    original_gemini_keys = os.environ.get("GOOGLE_API_KEYS")
 
     try:
         # Set test API keys - simulate user having multiple real keys
-        os.environ["GEMINI_API_KEYS"] = "key1-test,key2-test,key3-test"
+        os.environ["GOOGLE_API_KEYS"] = "key1-test,key2-test,key3-test"
 
         # User's setup
         set_default_provider("google:gemini-2.5-flash")
@@ -94,9 +94,9 @@ def test_user_scenario():
     finally:
         # Restore original environment
         if original_gemini_keys is not None:
-            os.environ["GEMINI_API_KEYS"] = original_gemini_keys
-        elif "GEMINI_API_KEYS" in os.environ:
-            del os.environ["GEMINI_API_KEYS"]
+            os.environ["GOOGLE_API_KEYS"] = original_gemini_keys
+        elif "GOOGLE_API_KEYS" in os.environ:
+            del os.environ["GOOGLE_API_KEYS"]
 
     logger.info("\n" + "=" * 60)
     logger.info("Test completed!")
@@ -108,10 +108,10 @@ async def test_with_basedrone_simulation():
     logger.info("=" * 60)
 
     # Set up test environment variables
-    original_gemini_keys = os.environ.get("GEMINI_API_KEYS")
+    original_gemini_keys = os.environ.get("GOOGLE_API_KEYS")
 
     try:
-        os.environ["GEMINI_API_KEYS"] = "sim-key1,sim-key2,sim-key3"
+        os.environ["GOOGLE_API_KEYS"] = "sim-key1,sim-key2,sim-key3"
         set_default_provider("google:gemini-2.5-flash")
 
         # Simulate what the user might be doing
@@ -140,6 +140,6 @@ async def test_with_basedrone_simulation():
     finally:
         # Restore original environment
         if original_gemini_keys is not None:
-            os.environ["GEMINI_API_KEYS"] = original_gemini_keys
-        elif "GEMINI_API_KEYS" in os.environ:
-            del os.environ["GEMINI_API_KEYS"]
+            os.environ["GOOGLE_API_KEYS"] = original_gemini_keys
+        elif "GOOGLE_API_KEYS" in os.environ:
+            del os.environ["GOOGLE_API_KEYS"]

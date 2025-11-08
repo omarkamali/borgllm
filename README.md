@@ -144,6 +144,7 @@ Supported providers:
 | OpenRouter    | `openrouter`   | `OPENROUTER_API_KEY`              | `OPENROUTER_API_KEYS`                |
 | Perplexity    | `perplexity`   | `PERPLEXITY_API_KEY`              | `PERPLEXITY_API_KEYS`                |
 | Qwen          | `qwen`         | `QWEN_API_KEY`                    | `QWEN_API_KEYS`                      |
+| Omneity Labs       | `omneity`      | `OMNEITY_API_KEY`                 | `OMNEITY_API_KEYS`                   |
 | Together AI   | `togetherai`   | `TOGETHERAI_API_KEY`              | `TOGETHERAI_API_KEYS`                |
 
 This list includes both built-in models and some popular choices available through their respective APIs. You can find the full list of models for each provider on their respective websites.
@@ -186,6 +187,7 @@ This list includes both built-in models and some popular choices available throu
 | `perplexity`  | `perplexity:llama-3.1-70b-instruct`           | Llama 3.1 70B instruct model from Perplexity.                        |
 | `perplexity`  | `perplexity:llama-3.1-sonar-large-online`     | Perplexity's premium research-focused model with web access.         |
 | `perplexity`  | `perplexity:llama-3.1-sonar-small-online`     | Smaller, faster online model from Perplexity.                        |
+| `omneity`     | `omneity:sawalni-beta`                        | Sawalni, a Moroccan-focused LLM from Omneity Labs.                                                |
 
 ### Configuration Prioritization and `borg.yml`
 

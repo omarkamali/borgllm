@@ -1221,8 +1221,12 @@ print(response.content)</code></pre>
             { provider: 'mistralai', model: 'mistralai:mistral-large-latest', description: 'Mistral\'s latest large model.' },
             { provider: 'mistralai', model: 'mistralai:mistral-medium-latest', description: 'Mistral\'s latest medium model.' },
             { provider: 'mistralai', model: 'mistralai:mistral-small-latest', description: 'Mistral\'s latest small model.' },
-            { provider: 'moonshot', model: 'moonshot:kimi-k2-0711-preview', description: 'Moonshot\'s Kimi K2 1T MoE model with strong agentic capabilities.' },
+            { provider: 'moonshot', model: 'moonshot:kimi-k2-0905-preview', description: 'Moonshot\'s Kimi K2 1T MoE model with strong agentic capabilities.' },
+            { provider: 'moonshot', model: 'moonshot:kimi-k2-thinking', description: 'Moonshot\'s Kimi K2 1T MoE model with reasoning and strong agentic capabilities.' },
             { provider: 'novita', model: 'novita:qwen/qwen3-32b', description: 'Qwen3 32B model on Novita AI.' },
+            { provider: 'openai', model: 'openai:gpt-5', description: 'A key rolling update/specific version in 2025.' },
+            { provider: 'openai', model: 'openai:gpt-5-mini', description: 'Smaller variant of GPT-5.' },
+            { provider: 'openai', model: 'openai:gpt-5-nano', description: 'Even smaller, highly efficient GPT-5 model.' },
             { provider: 'openai', model: 'openai:gpt-4.1', description: 'A key rolling update/specific version in 2025.' },
             { provider: 'openai', model: 'openai:gpt-4.1-mini', description: 'Smaller variant of GPT-4.1.' },
             { provider: 'openai', model: 'openai:gpt-4.1-nano', description: 'Even smaller, highly efficient GPT-4.1 model.' },
@@ -1241,6 +1245,7 @@ print(response.content)</code></pre>
             { provider: 'perplexity', model: 'perplexity:llama-3.1-sonar-large-online', description: 'Perplexity\'s premium research-focused model with web access.' },
             { provider: 'perplexity', model: 'perplexity:llama-3.1-sonar-small-online', description: 'Smaller, faster online model from Perplexity.' },
             { provider: 'qwen', model: 'qwen:qwen3-32b', description: 'Qwen3 32B model directly from Qwen.' },
+            { provider: 'omneity', model: 'omneity:sawalni-beta', description: 'Sawalni, a Moroccan-focused agentic LLM from Omneity Labs.' },
             { provider: 'togetherai', model: 'togetherai:qwen/qwen3-32b', description: 'Qwen3 32B model on Together AI.' }
         ];
 
@@ -1262,6 +1267,7 @@ print(response.content)</code></pre>
             openrouter: { name: 'OpenRouter', domain: 'openrouter.ai' },
             perplexity: { name: 'Perplexity', domain: 'perplexity.ai' },
             qwen: { name: 'Qwen', domain: 'qwen.ai' },
+            omneity: { name: 'Omneity Labs', domain: 'omneitylabs.com' },
             togetherai: { name: 'Together AI', domain: 'together.ai' },
         };
 

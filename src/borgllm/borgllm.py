@@ -137,7 +137,7 @@ BUILTIN_PROVIDERS = {
     },
     "google": {
         "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/",
-        "api_key_env": "GEMINI_API_KEY",
+        "api_key_env": "GOOGLE_API_KEY",
         "default_model": "gemini-2.5-flash",
         "max_tokens": 32768,
     },
@@ -147,6 +147,13 @@ BUILTIN_PROVIDERS = {
         "default_model": "kimi-k2-0711-preview",
         "max_tokens": 131072,
     },
+    "omneity": {
+        "base_url": "https://api.sawalni.com/v1",
+        "api_key_env": "OMNEITY_API_KEY",
+        "default_model": "sawalni-beta",
+        "max_tokens": 8192,
+    },
+
 }
 
 
