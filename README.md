@@ -140,11 +140,11 @@ Supported providers:
 | Mistral AI    | `mistralai`    | `MISTRALAI_API_KEY`               | `MISTRALAI_API_KEYS`                 |
 | Moonshot AI   | `moonshot`     | `MOONSHOT_API_KEY`                | `MOONSHOT_API_KEYS`                  |
 | Novita        | `novita`       | `NOVITA_API_KEY`                  | `NOVITA_API_KEYS`                    |
+| Omneity Labs       | `omneity`      | `OMNEITY_API_KEY`                 | `OMNEITY_API_KEYS`                   |
 | OpenAI        | `openai`       | `OPENAI_API_KEY`                  | `OPENAI_API_KEYS`                    |
 | OpenRouter    | `openrouter`   | `OPENROUTER_API_KEY`              | `OPENROUTER_API_KEYS`                |
 | Perplexity    | `perplexity`   | `PERPLEXITY_API_KEY`              | `PERPLEXITY_API_KEYS`                |
 | Qwen          | `qwen`         | `QWEN_API_KEY`                    | `QWEN_API_KEYS`                      |
-| Omneity Labs       | `omneity`      | `OMNEITY_API_KEY`                 | `OMNEITY_API_KEYS`                   |
 | Together AI   | `togetherai`   | `TOGETHERAI_API_KEY`              | `TOGETHERAI_API_KEYS`                |
 
 This list includes both built-in models and some popular choices available through their respective APIs. You can find the full list of models for each provider on their respective websites.
