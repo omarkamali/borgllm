@@ -212,6 +212,8 @@ Supported providers:
 
 This list includes both built-in models and some popular choices available through their respective APIs. You can find the full list of models for each provider on their respective websites.
 
+More information at https://borgllm.com.
+
 | Provider      | Model                      | Description                                                          |
 | :------------ | :-------------------------------------------- | :------------------------------------------------------------------- |
 | `anthropic`   | `anthropic:claude-3-5-sonnet-20240620`        | Specific dated version of Claude 3.5 Sonnet.                         |
