@@ -4,23 +4,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BorgLLM - Unified LLM Integration & Management</title>
+    <title>BorgLLM - Universal LLM Client | Drop-in OpenAI SDK Replacement</title>
     <meta name="description"
-        content="Zero config LangChain-compatible LLM client with API key rotation, rate limit management, and custom fallback strategies.">
-    <meta name="keywords" content="LLM, OpenAI, Anthropic, GPT, Claude, AI, Machine Learning, Python, LangChain">
+        content="BorgLLM is a universal Python LLM client with 20+ integrated providers including OpenAI GPT-5, Claude, Gemini. Features API key rotation, rate limit handling, and automatic fallback. Drop-in replacement for OpenAI SDK.">
+    <meta name="keywords" content="LLM, OpenAI, GPT-5, GPT-5.2, Claude, Anthropic, Gemini, Google AI, Groq, DeepSeek, Python, OpenAI SDK, API key rotation, rate limiting, LangChain, AI API, machine learning">
+    <meta name="author" content="Omar Kamali">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://borgllm.com/">
 
     <!-- Open Graph tags -->
-    <meta property="og:title" content="BorgLLM - Unified LLM Integration & Management">
+    <meta property="og:title" content="BorgLLM - Universal LLM Client for Python">
     <meta property="og:description"
-        content="Zero config LangChain-compatible LLM client with API key rotation, rate limit management, and custom fallback strategies.">
+        content="20+ LLM providers in one client. Drop-in OpenAI SDK replacement with GPT-5, Claude, Gemini support. API key rotation & automatic fallback.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://omarkamali.github.io/borgllm/">
+    <meta property="og:url" content="https://borgllm.com/">
+    <meta property="og:site_name" content="BorgLLM">
+    <meta property="og:locale" content="en_US">
 
     <!-- Twitter Card tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="BorgLLM - Unified LLM Integration & Management">
+    <meta name="twitter:title" content="BorgLLM - Universal LLM Client for Python">
     <meta name="twitter:description"
-        content="Zero config LangChain-compatible LLM client with API key rotation, rate limit management, and custom fallback strategies.">
+        content="20+ LLM providers in one client. Drop-in OpenAI SDK replacement with GPT-5, Claude, Gemini. API key rotation & automatic fallback.">
+    <meta name="twitter:site" content="@borgllm">
+
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "BorgLLM",
+        "description": "Universal Python LLM client with 20+ integrated providers. Drop-in OpenAI SDK replacement.",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Cross-platform",
+        "programmingLanguage": "Python",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "Omar Kamali"
+        },
+        "license": "https://opensource.org/licenses/MIT"
+    }
+    </script>
 
     <!-- Favicon -->
     <link rel="icon"
@@ -84,12 +113,26 @@
         }
 
         .hero {
-            padding: 80px 0;
+            padding: 100px 0 80px;
             text-align: center;
             color: #e4e4e7;
             position: relative;
-            background: linear-gradient(135deg, rgba(0, 255, 127, 0.1) 0%, rgba(0, 191, 255, 0.1) 100%);
-            border-bottom: 1px solid rgba(0, 255, 127, 0.3);
+            background: linear-gradient(180deg, rgba(0, 255, 127, 0.08) 0%, rgba(0, 191, 255, 0.05) 50%, transparent 100%);
+            border-bottom: 1px solid rgba(0, 255, 127, 0.2);
+        }
+
+        /* Version badge */
+        .version-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(0, 255, 127, 0.2), rgba(0, 191, 255, 0.2));
+            border: 1px solid rgba(0, 255, 127, 0.4);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #00ff7f;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
         }
 
         .hero h1 {
@@ -210,40 +253,52 @@
 
         /* Stats Section */
         .stats-section {
-            background: rgba(0, 0, 0, 0.3);
+            background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.4), transparent);
             backdrop-filter: blur(10px);
-            padding: 60px 0;
-            border-top: 1px solid rgba(0, 255, 127, 0.2);
-            border-bottom: 1px solid rgba(0, 255, 127, 0.2);
+            padding: 50px 0;
+            border-top: 1px solid rgba(0, 255, 127, 0.1);
+            border-bottom: 1px solid rgba(0, 255, 127, 0.1);
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto;
         }
 
         .stat-item {
             text-align: center;
+            padding: 20px;
+            border-radius: 12px;
+            background: rgba(17, 17, 17, 0.5);
+            border: 1px solid rgba(0, 255, 127, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            border-color: rgba(0, 255, 127, 0.3);
+            background: rgba(17, 17, 17, 0.8);
         }
 
         .stat-number {
-            font-size: 3rem;
-            font-weight: 900;
-            background: linear-gradient(45deg, #00ff7f, #00bfff);
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00ff7f, #00bfff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             line-height: 1;
         }
 
         .stat-label {
-            color: #a1a1aa;
-            font-size: 0.9rem;
+            color: #71717a;
+            font-size: 0.8rem;
             font-weight: 500;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         .main-content {
@@ -261,36 +316,56 @@
         }
 
         .feature {
-            text-align: center;
-            padding: 30px;
-            border-radius: 12px;
-            border: 1px solid rgba(0, 255, 127, 0.3);
-            background: rgba(17, 17, 17, 0.8);
+            text-align: left;
+            padding: 28px;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 255, 127, 0.15);
+            background: linear-gradient(145deg, rgba(17, 17, 17, 0.9), rgba(25, 25, 25, 0.7));
             backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 127, 0.5), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .feature:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 255, 127, 0.1);
-            border-color: rgba(0, 255, 127, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(0, 255, 127, 0.08);
+            border-color: rgba(0, 255, 127, 0.4);
+        }
+
+        .feature:hover::before {
+            opacity: 1;
         }
 
         .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            display: inline-block;
         }
 
         .feature h3 {
-            font-size: 1.3rem;
+            font-size: 1.15rem;
             font-weight: 600;
-            margin-bottom: 15px;
-            color: #e4e4e7;
+            margin-bottom: 10px;
+            color: #f4f4f5;
         }
 
         .feature p {
             color: #a1a1aa;
             line-height: 1.6;
+            font-size: 0.95rem;
         }
 
         .code-example {
@@ -702,11 +777,15 @@
 
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 30px;
+                gap: 15px;
             }
 
             .stat-number {
-                font-size: 2.5rem;
+                font-size: 2rem;
+            }
+
+            .stat-item {
+                padding: 15px;
             }
 
             .hero-badges {
@@ -746,15 +825,16 @@
 <body>
     <div class="hero">
         <div class="container">
+            <div class="version-badge animate-fadeInUp">v2.0.0 — Now with BorgOpenAI</div>
             <h1 class="animate-fadeInUp">🤖 BorgLLM</h1>
             <div class="github-star-button-container">
                 <iframe
                     src="https://ghbtns.com/github-btn.html?user=omarkamali&repo=borgllm&type=star&count=true&size=large"
-                    frameborder="0" scrolling="0" width="77" height="30" title="GitHub Star"></iframe>
+                    frameborder="0" scrolling="0" width="150" height="30" title="GitHub Stars"></iframe>
             </div>
             <p class="subtitle animate-fadeInUp">
-                Zero config LangChain-compatible LLM client with API key rotation, rate limit management, and custom
-                fallback strategies.
+                Universal Python LLM client with integrated providers. Drop-in OpenAI SDK replacement with
+                API key rotation, rate limit handling, and configurable fallback strategies.
             </p>
 
             <div class="hero-badges animate-fadeInUp">
@@ -773,12 +853,14 @@
             <div class="code-example animate-fadeInUp" style="margin-top: 40px;">
                 <h3>Try it now - Zero Configuration <button class="copy-btn" onclick="copyHeroCode()">📋 Copy</button>
                 </h3>
-                <pre><code class="language-python" id="hero-code">from borgllm import create_llm
+                <pre><code class="language-python" id="hero-code">from borgllm import BorgOpenAI
 
-# Works with any provider instantly
-llm = create_llm("openai:gpt-4o")
-response = llm.invoke("Hello BorgLLM!")
-print(response.content)</code></pre>
+client = BorgOpenAI()
+response = client.chat.completions.create(
+    model="openai:gpt-5.2",  # or any provider:model
+    messages=[{"role": "user", "content": "Hello BorgLLM!"}]
+)
+print(response.choices[0].message.content)</code></pre>
             </div>
         </div>
     </div>
@@ -797,7 +879,7 @@ print(response.content)</code></pre>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number">100%</div>
-                    <div class="stat-label">LangChain Compatible</div>
+                    <div class="stat-label">OpenAI SDK Compatible</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number">0</div>
@@ -826,8 +908,8 @@ print(response.content)</code></pre>
 
                 <div class="feature">
                     <div class="feature-icon">🧠</div>
-                    <h3>LangChain Compatible</h3>
-                    <p>Seamless integration with LangChain framework - drop-in replacement for ChatOpenAI.</p>
+                    <h3>Drop-in OpenAI SDK</h3>
+                    <p>BorgOpenAI and BorgAsyncOpenAI duck-type the official OpenAI clients. Optional LangChain support.</p>
                 </div>
 
                 <div class="feature">
@@ -861,6 +943,12 @@ print(response.content)</code></pre>
                 </div>
 
                 <div class="providers-filter">
+                    <div class="search-container" style="margin-bottom: 20px;">
+                        <input type="text" id="model-search" placeholder="🔍 Search models (e.g., gpt-5, claude, gemini...)" 
+                            style="width: 100%; padding: 12px 20px; border-radius: 25px; border: 1px solid rgba(0, 255, 127, 0.3); background: rgba(17, 17, 17, 0.9); color: #e4e4e7; font-size: 1rem; outline: none; transition: all 0.3s ease;"
+                            onfocus="this.style.borderColor='rgba(0, 255, 127, 0.8)'; this.style.boxShadow='0 0 15px rgba(0, 255, 127, 0.2)';"
+                            onblur="this.style.borderColor='rgba(0, 255, 127, 0.3)'; this.style.boxShadow='none';">
+                    </div>
                     <div class="filter-pills">
                         <button class="filter-pill active" data-provider="all">All</button>
                         <!-- Filter pills will be dynamically generated by JavaScript -->
@@ -906,26 +994,32 @@ print(response.content)</code></pre>
 
                 <div class="code-example">
                     <h3>Installation <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></h3>
-                    <pre><code class="language-bash">pip install borgllm</code></pre>
+                    <pre><code class="language-bash"># Core install (OpenAI SDK integration)
+pip install borgllm
+
+# With optional LangChain support
+pip install borgllm[langchain]</code></pre>
                 </div>
 
                 <div class="code-example">
-                    <h3>Basic Usage - Zero Configuration <button class="copy-btn" onclick="copyCode(this)">📋
+                    <h3>Basic Usage - BorgOpenAI (Drop-in OpenAI SDK) <button class="copy-btn" onclick="copyCode(this)">📋
                             Copy</button></h3>
-                    <pre><code class="language-python">from borgllm import create_llm
-from langchain_core.messages import HumanMessage
+                    <pre><code class="language-python">from borgllm import BorgOpenAI
 
 # Works with any provider - just specify provider:model
-llm = create_llm("openai:gpt-4o", temperature=0.7)
+client = BorgOpenAI()
 
-# It's a standard LangChain ChatOpenAI instance
-response = llm.invoke([HumanMessage(content="Hello! How are you?")])
-print(response.content)
+response = client.chat.completions.create(
+    model="openai:gpt-5.2",
+    messages=[{"role": "user", "content": "Hello! How are you?"}]
+)
+print(response.choices[0].message.content)
 
 # Try different providers seamlessly
-anthropic_llm = create_llm("anthropic:claude-sonnet-4", temperature=0.7)
-google_llm = create_llm("google:gemini-2.5-pro", temperature=0.7)
-groq_llm = create_llm("groq:llama-3.3-70b-versatile", temperature=0.7)</code></pre>
+response = client.chat.completions.create(
+    model="anthropic:claude-opus-4-5",  # or google:gemini-3-pro-preview
+    messages=[{"role": "user", "content": "Hello!"}]
+)</code></pre>
                 </div>
 
                 <div class="code-example">
@@ -955,16 +1049,30 @@ llm:
 
                 <div class="code-example">
                     <h3>Using Virtual Providers <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></h3>
-                    <pre><code class="language-python">from borgllm import create_llm
+                    <pre><code class="language-python">from borgllm import BorgOpenAI
 
 # With borg.yml configuration above
-llm = create_llm()  # Uses default "smart-fallback" virtual provider
+client = BorgOpenAI()
 
 # Automatically handles:
 # - Rate limits (switches to next provider)
 # - Context window limits (uses appropriate model)
 # - Provider failures (seamless fallback)
-response = llm.invoke([HumanMessage(content="Write a detailed analysis...")])
+response = client.chat.completions.create(
+    model="smart-fallback",  # Uses virtual provider from borg.yml
+    messages=[{"role": "user", "content": "Write a detailed analysis..."}]
+)
+print(response.choices[0].message.content)</code></pre>
+                </div>
+
+                <div class="code-example">
+                    <h3>Optional LangChain Integration <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></h3>
+                    <pre><code class="language-python"># Requires: pip install borgllm[langchain]
+from borgllm import create_llm
+from langchain_core.messages import HumanMessage
+
+llm = create_llm("openai:gpt-5.2", temperature=0.7)
+response = llm.invoke([HumanMessage(content="Hello!")])
 print(response.content)</code></pre>
                 </div>
 
@@ -1033,18 +1141,18 @@ print(response.content)</code></pre>
 
         // Animate provider:model switching
         const providerModels = [
-            'openai:gpt-4o',
-            'anthropic:claude-sonnet-4',
-            'moonshot:kimi-k2-0905-preview',
-            'google:gemini-2.5-pro',
+            'openai:gpt-5.2',
+            'anthropic:claude-opus-4-5',
+            'google:gemini-3-pro-preview',
+            'openai:gpt-5.1-codex',
+            'anthropic:claude-sonnet-4-5',
+            'qwen:qwen-max-latest',
             'groq:llama-3.3-70b-versatile',
             'deepseek:deepseek-chat',
             'mistralai:mistral-large-latest',
             'cerebras:qwen-3-32b',
-            'perplexity:llama-3.1-sonar-large-online',
+            'moonshot:kimi-k2-0905-preview',
             'omneity:sawalni-beta',
-            'openrouter:qwen/qwen3-32b',
-            'cohere:command-r-plus',
             'zai:zai/glm-4.6',
             'minimax:minimax-m2',
         ];
@@ -1202,22 +1310,34 @@ print(response.content)</code></pre>
         }
 
         const allProviders = [
-            { provider: 'anthropic', model: 'anthropic:claude-3-5-sonnet-20240620', description: 'Specific dated version of Claude 3.5 Sonnet.' },
-            { provider: 'anthropic', model: 'anthropic:claude-3.7-sonnet', description: 'A powerful, general-purpose model with hybrid reasoning.' },
+            { provider: 'anthropic', model: 'anthropic:claude-opus-4-5', description: 'Most intelligent Claude model - frontier coding, agents, enterprise.' },
+            { provider: 'anthropic', model: 'anthropic:claude-opus-4-1', description: 'Superior performance for real-world coding and agentic tasks.' },
+            { provider: 'anthropic', model: 'anthropic:claude-sonnet-4-5', description: 'Best balance of intelligence, speed, and cost.' },
             { provider: 'anthropic', model: 'anthropic:claude-sonnet-4', description: 'Balanced model with strong capabilities for demanding applications.' },
             { provider: 'anyscale', model: 'anyscale:qwen/qwen3-32b', description: 'Qwen3 32B model on Anyscale.' },
+            { provider: 'anyscale', model: 'anyscale:meta-llama/Llama-3.3-70B-Instruct', description: 'Llama 3.3 70B Instruct on Anyscale.' },
+            { provider: 'anyscale', model: 'anyscale:mistralai/Mixtral-8x22B-Instruct-v0.1', description: 'Mixtral 8x22B on Anyscale.' },
+            { provider: 'cerebras', model: 'cerebras:llama-3.3-70b', description: 'Llama 3.3 70B on Cerebras - ultra-fast inference.' },
             { provider: 'cerebras', model: 'cerebras:qwen-3-32b', description: 'Qwen 3 32B model on Cerebras infrastructure.' },
+            { provider: 'cerebras', model: 'cerebras:llama-4-scout-17b-16e', description: 'Llama 4 Scout on Cerebras.' },
             { provider: 'cohere', model: 'cohere:command-r-plus', description: 'Cohere\'s latest command model.' },
             { provider: 'deepinfra', model: 'deepinfra:qwen/qwen3-32b', description: 'Qwen3 32B model on DeepInfra.' },
             { provider: 'deepseek', model: 'deepseek:deepseek-chat', description: 'DeepSeek\'s latest chat model aka V3.' },
             { provider: 'deepseek', model: 'deepseek:deepseek-reasoner', description: 'DeepSeek\'s latest reasoning model aka R1.' },
             { provider: 'featherless', model: 'featherless:meta-llama/Meta-Llama-3.1-8B-Instruct', description: 'Meta Llama 3.1 8B Instruct model on Featherless.' },
+            { provider: 'featherless', model: 'featherless:Qwen/Qwen3-32B', description: 'Qwen3 32B on Featherless.' },
+            { provider: 'featherless', model: 'featherless:deepseek-ai/DeepSeek-V3-0324', description: 'DeepSeek V3 on Featherless.' },
+            { provider: 'featherless', model: 'featherless:NousResearch/Hermes-3-Llama-3.1-70B', description: 'Hermes 3 Llama 70B on Featherless.' },
             { provider: 'fireworks', model: 'fireworks:qwen/qwen3-32b', description: 'Qwen3 32B model on Fireworks AI.' },
+            { provider: 'google', model: 'google:gemini-3-pro-preview', description: 'Google\'s flagship frontier model for multimodal reasoning and agentic coding.' },
             { provider: 'google', model: 'google:gemini-2.5-flash', description: 'Optimized for speed and high-volume, real-time applications.' },
             { provider: 'google', model: 'google:gemini-2.5-flash-lite', description: 'Most cost-efficient and fastest in the 2.5 series.' },
-            { provider: 'google', model: 'google:gemini-2.5-pro', description: 'Google\'s most capable model for complex tasks.' },
+            { provider: 'google', model: 'google:gemini-2.5-pro', description: 'Google\'s most capable 2.5 model for complex tasks.' },
             { provider: 'groq', model: 'groq:llama-3.1-8b-instant', description: 'Faster, smaller Llama 3.1 model.' },
             { provider: 'groq', model: 'groq:llama-3.3-70b-versatile', description: 'Llama 3.3, optimized for speed on Groq hardware.' },
+            { provider: 'groq', model: 'groq:llama-4-scout-17b-16e-instruct', description: 'Llama 4 Scout on Groq - ultra-fast.' },
+            { provider: 'groq', model: 'groq:qwen-qwq-32b', description: 'QwQ 32B reasoning model on Groq.' },
+            { provider: 'groq', model: 'groq:deepseek-r1-distill-llama-70b', description: 'DeepSeek R1 distilled on Groq.' },
             { provider: 'groq', model: 'groq:mixtral-8x22b-instruct', description: 'Mixture-of-Experts model for efficiency and performance.' },
             { provider: 'mistralai', model: 'mistralai:devstral-small-latest', description: 'Mistral\'s agentic model.' },
             { provider: 'mistralai', model: 'mistralai:ministral-3b-latest', description: 'Mistral\'s tiny model.' },
@@ -1227,17 +1347,21 @@ print(response.content)</code></pre>
             { provider: 'moonshot', model: 'moonshot:kimi-k2-0905-preview', description: 'Moonshot\'s Kimi K2 1T MoE model with strong agentic capabilities.' },
             { provider: 'moonshot', model: 'moonshot:kimi-k2-thinking', description: 'Moonshot\'s Kimi K2 1T MoE model with reasoning and strong agentic capabilities.' },
             { provider: 'novita', model: 'novita:qwen/qwen3-32b', description: 'Qwen3 32B model on Novita AI.' },
-            { provider: 'openai', model: 'openai:gpt-5', description: 'A key rolling update/specific version in 2025.' },
-            { provider: 'openai', model: 'openai:gpt-5-mini', description: 'Smaller variant of GPT-5.' },
-            { provider: 'openai', model: 'openai:gpt-5-nano', description: 'Even smaller, highly efficient GPT-5 model.' },
-            { provider: 'openai', model: 'openai:gpt-4.1', description: 'A key rolling update/specific version in 2025.' },
+            { provider: 'novita', model: 'novita:meta-llama/llama-3.3-70b-instruct', description: 'Llama 3.3 70B on Novita AI.' },
+            { provider: 'novita', model: 'novita:deepseek/deepseek-v3-0324', description: 'DeepSeek V3 on Novita AI.' },
+            { provider: 'novita', model: 'novita:google/gemma-3-27b-it', description: 'Gemma 3 27B on Novita AI.' },
+            { provider: 'openai', model: 'openai:gpt-5.2', description: 'OpenAI\'s latest flagship model with extended thinking.' },
+            { provider: 'openai', model: 'openai:gpt-5.1', description: 'Powerful general-purpose model for developers.' },
+            { provider: 'openai', model: 'openai:gpt-5.1-codex', description: 'Optimized for agentic coding tasks.' },
+            { provider: 'openai', model: 'openai:gpt-5.1-codex-mini', description: 'Smaller codex model for coding tasks.' },
+            { provider: 'openai', model: 'openai:gpt-5', description: 'GPT-5 base model.' },
+            { provider: 'openai', model: 'openai:gpt-5-codex', description: 'GPT-5 optimized for Codex agentic coding.' },
+            { provider: 'openai', model: 'openai:gpt-4.1', description: 'Improved GPT-4 variant.' },
             { provider: 'openai', model: 'openai:gpt-4.1-mini', description: 'Smaller variant of GPT-4.1.' },
-            { provider: 'openai', model: 'openai:gpt-4.1-nano', description: 'Even smaller, highly efficient GPT-4.1 model.' },
-            { provider: 'openai', model: 'openai:gpt-4o', description: 'OpenAI\'s latest flagship multimodal model.' },
+            { provider: 'openai', model: 'openai:gpt-4o', description: 'OpenAI\'s multimodal model.' },
             { provider: 'openai', model: 'openai:gpt-4o-mini', description: 'A compact and faster version of GPT-4o.' },
             { provider: 'openai', model: 'openai:o3', description: 'Focus on advanced reasoning and complex tasks.' },
             { provider: 'openai', model: 'openai:o3-mini', description: 'Smaller, faster version of O3.' },
-            { provider: 'openai', model: 'openai:o4-mini-high', description: 'High reasoning budget, great for advanced tasks.' },
             { provider: 'openrouter', model: 'openrouter:minimax/minimax-m1', description: 'MiniMax M1 model available via OpenRouter.' },
             { provider: 'openrouter', model: 'openrouter:mistralai/mistral-7b-instruct', description: 'Mistral 7B Instruct model via OpenRouter.' },
             { provider: 'openrouter', model: 'openrouter:qwen/qwen3-30b-a3b', description: 'Qwen3 30B A3B model available via OpenRouter.' },
@@ -1247,6 +1371,11 @@ print(response.content)</code></pre>
             { provider: 'perplexity', model: 'perplexity:llama-3.1-70b-instruct', description: 'Llama 3.1 70B instruct model from Perplexity.' },
             { provider: 'perplexity', model: 'perplexity:llama-3.1-sonar-large-online', description: 'Perplexity\'s premium research-focused model with web access.' },
             { provider: 'perplexity', model: 'perplexity:llama-3.1-sonar-small-online', description: 'Smaller, faster online model from Perplexity.' },
+            { provider: 'qwen', model: 'qwen:qwen-turbo-latest', description: 'Qwen Turbo - fast and efficient via Qwen API.' },
+            { provider: 'qwen', model: 'qwen:qwen-plus-latest', description: 'Qwen Plus - balanced performance via Qwen API.' },
+            { provider: 'qwen', model: 'qwen:qwen-max-latest', description: 'Qwen Max - most capable via Qwen API.' },
+            { provider: 'qwen', model: 'qwen:qwen3-coder-plus', description: 'Qwen3 Coder Plus for coding tasks.' },
+            { provider: 'qwen', model: 'qwen:qwen3-coder-flash', description: 'Qwen3 Coder Flash - fast coding model.' },
             { provider: 'qwen', model: 'qwen:qwen3-32b', description: 'Qwen3 32B model directly from Qwen.' },
             { provider: 'omneity', model: 'omneity:sawalni-beta', description: 'Sawalni, a Moroccan-focused agentic LLM from Omneity Labs.' },
             { provider: 'togetherai', model: 'togetherai:qwen/qwen3-32b', description: 'Qwen3 32B model on Together AI.' },
@@ -1371,20 +1500,44 @@ print(response.content)</code></pre>
             }
         }
 
-        function filterProviders(providerType) {
-            if (providerType === 'all') {
-                filteredProviders = [...allProviders];
-            } else {
-                filteredProviders = allProviders.filter(item => item.provider === providerType);
-            }
+        let currentSearchQuery = '';
+        let currentProviderFilter = 'all';
 
-            currentPage = 1;
-            renderTable();
+        function filterProviders(providerType) {
+            currentProviderFilter = providerType;
+            applyFilters();
 
             document.querySelectorAll('.filter-pill').forEach(pill => {
                 pill.classList.remove('active');
             });
             document.querySelector(`[data-provider="${providerType}"]`).classList.add('active');
+        }
+
+        function searchModels(query) {
+            currentSearchQuery = query.toLowerCase().trim();
+            applyFilters();
+        }
+
+        function applyFilters() {
+            let results = [...allProviders];
+
+            // Apply provider filter
+            if (currentProviderFilter !== 'all') {
+                results = results.filter(item => item.provider === currentProviderFilter);
+            }
+
+            // Apply search filter
+            if (currentSearchQuery) {
+                results = results.filter(item => 
+                    item.model.toLowerCase().includes(currentSearchQuery) ||
+                    item.description.toLowerCase().includes(currentSearchQuery) ||
+                    item.provider.toLowerCase().includes(currentSearchQuery)
+                );
+            }
+
+            filteredProviders = results;
+            currentPage = 1;
+            renderTable();
         }
 
         function initializeFilterPills() {
@@ -1419,6 +1572,14 @@ print(response.content)</code></pre>
             initializeFilterPills();
             renderTable();
             startProviderAnimation();
+
+            // Initialize search functionality
+            const searchInput = document.getElementById('model-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    searchModels(e.target.value);
+                });
+            }
         });
     </script>
 </body>

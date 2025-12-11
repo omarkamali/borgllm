@@ -19,7 +19,7 @@ with open(pyproject_path, "r") as f:
     pyproject_content = toml.load(f)
 
 project = "BorgLLM"
-copyright = "2025, BorgLLM"
+copyright = "2025, BorgLLM - Omar Kamali"
 author = "Omar Kamali"
 release = pyproject_content["project"]["version"]
 
@@ -43,3 +43,24 @@ exclude_patterns = []
 
 html_theme = "furo"
 html_static_path = ["_static"]
+
+# Furo theme options - align with website color scheme
+html_theme_options = {
+    "light_css_variables": {
+        "color-brand-primary": "#00cc66",
+        "color-brand-content": "#00cc66",
+        "color-admonition-background": "rgba(0, 204, 102, 0.1)",
+    },
+    "dark_css_variables": {
+        "color-brand-primary": "#00ff7f",
+        "color-brand-content": "#00ff7f",
+        "color-background-primary": "#0a0a0a",
+        "color-background-secondary": "#111111",
+        "color-admonition-background": "rgba(0, 255, 127, 0.1)",
+    },
+    "sidebar_hide_name": False,
+    "navigation_with_keys": True,
+}
+
+html_title = "BorgLLM"
+html_short_title = "BorgLLM"

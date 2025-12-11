@@ -1,0 +1,21 @@
+llm:
+  providers:
+    - name: "local_qwen"
+      base_url: "http://localhost:1234/v1"
+      model: "qwen/qwen3-8b"
+      api_key: "dummy-key"
+      temperature: 0.7
+      max_tokens: 8192
+
+  virtual:
+    - name: "qwen-auto"
+      upstreams:
+        # This virtual provider will first use groq which has a max context window of 6k tokens
+        - name: "groq:qwen/qwen3-32b"
+        # If a request exceeds 6k tokens or groq's rate limit is reached, it will use cerebras
+        # which has a max context window of 128k tokens but is limited to 1M tokens per day.
+        - name: "cerebras:qwen-3-32b"
+        # If both are exhausted, it will use the local qwen model as a fallback until either is available again.
+        - name: "local_qwen"
+
+  default_model: "qwen-auto"

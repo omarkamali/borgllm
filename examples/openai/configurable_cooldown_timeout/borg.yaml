@@ -1,0 +1,21 @@
+llm:
+  providers:
+    - name: "test-provider-1"
+      base_url: "http://localhost:8001/v1"
+      model: "test-model-1"
+      api_key: "dummy-key-1"
+      max_tokens: 4096
+
+    - name: "test-provider-2"
+      base_url: "http://localhost:8002/v1"
+      model: "test-model-2"
+      api_key: "dummy-key-2"
+      max_tokens: 8192
+
+  virtual:
+    - name: "virtual-test-provider"
+      upstreams:
+        - name: "test-provider-1"
+        - name: "test-provider-2"
+
+  default_model: "test-provider-1"

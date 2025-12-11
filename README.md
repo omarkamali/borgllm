@@ -1,24 +1,34 @@
-# BorgLLM - LLM Integration and Management
+# BorgLLM - Universal LLM Client
 
 [![BorgLLM Tests](https://github.com/omarkamali/borgllm/actions/workflows/pytest.yml/badge.svg)](https://github.com/omarkamali/borgllm/actions/workflows/pytest.yml)
 
-**BorgLLM** is a Python library that facilitates the integration and management of Large Language Models (LLMs). It offers a unified, LangChain-compatible interface, supporting features such as automatic API key rotation, rate limit handling, and configurable provider fallback strategies.
+**BorgLLM** is a universal Python LLM client with integrated LLM providers, automatic API key rotation, rate limit handling, and configurable provider fallback strategies. It provides drop-in replacements for the OpenAI SDK with optional LangChain support.
 
-## Latest Updates
-- 🆕 ZAI support added with models `zai:zai/glm-4.6` and `zai:zai/glm-4.5-air`.
-- 🆕 MiniMax support added with flagship `minimax:minimax-m2` for coding and agentic tasks.
-- 🆕 Omneity support added with model `omneity:sawalni-beta` (Moroccan-focused agentic LLM).
+You don't have to hunt for the base_url, get going instantly with BorgLLM:
+```py
+client = BorgOpenAI()
+
+response = client.chat.completions.create(
+    model="provider:model", # e.g., "openai:gpt-5.2", "anthropic:claude-opus-4-5", "google:gemini-3-pro-preview"
+    messages=[{"role": "user", "content": "Say hello in 3 words"}],
+)
+```
+
+## Latest Updates (v2.0.0)
+- 🚀 **LangChain is now optional** – core install is lighter, add `[langchain]` extra when needed
+- 🆕 **BorgOpenAI** and **BorgAsyncOpenAI** – drop-in OpenAI SDK replacements with auto-provider resolution
+- 🆕 ZAI, MiniMax, and Omneity (Sawalni) providers added
 
 ## ✨ Key Features
 
-- **🔄 Unified Interface**: Single API for multiple LLM providers
+- **🔄 Drop-in OpenAI SDK**: `BorgOpenAI` and `BorgAsyncOpenAI` duck-type the official clients
 - **🔑 API Key Rotation**: Automatic round-robin rotation for multiple API keys
 - **⚡ Rate Limit Handling**: Built-in 429 error handling with cooldown periods
-- **🧠 LangChain Integration**: Seamless integration with LangChain framework
-- **📝 Flexible Configuration**: Configure via `borg.yml` file optionally, environment variables, or programmatic API
-- **🛡️ Provider Fallback**: Automatic switching to alternative providers/models in case of failures or rate limits
-- **🔍 Virtual Providers**: Explicitly choose your fallback strategy or merge multiple providers and call them as a single provider seamlessly in your code
-- **🔍 Pydantic V2 Ready**: BorgLLM is explicitly powered by Pydantic V2.
+- **🧠 Optional LangChain**: Install `borgllm[langchain]` for LangChain integration
+- **📝 Flexible Configuration**: Configure via `borg.yml`, environment variables, or programmatic API
+- **🛡️ Provider Fallback**: Automatic switching to alternative providers on failures or rate limits
+- **🔍 Virtual Providers**: Merge multiple providers with custom fallback strategies
+- **🔍 Pydantic V2 Ready**: Powered by Pydantic V2
 
 ### 🌐 Documentation & Website
 
@@ -30,61 +40,110 @@
 ### Installation
 
 ```bash
+# Core install (OpenAI SDK integration)
 pip install borgllm
+
+# With LangChain support
+pip install borgllm[langchain]
 ```
 
-### Basic Usage: `create_llm` (LangChain Compatible)
+### Universal OpenAI Client (`BorgOpenAI`, `BorgAsyncOpenAI`)
 
-_Find more examples in the [examples](examples/README.md) directory._
-
-You can use BorgLLM with zero configuration with `create_llm`, the primary way to obtain a LangChain-compatible LLM instance from BorgLLM. It handles provider selection, API key management, and rate limiting automatically.
-
-To use `create_llm`, you typically pass the `provider_name` in the format `provider:model`. If a default provider is set (via `borg.yml` or `set_default_provider`), you can omit the argument.
+Need a drop-in OpenAI SDK client that automatically resolves any BorgLLM provider (including virtual strategies)? Use the new universal Borg clients:
 
 ```python
-from borgllm import BorgLLM, set_default_provider, create_llm
+from borgllm import BorgOpenAI, BorgAsyncOpenAI
+
+# Works out of the box – model name decides the provider (provider:model)
+client = BorgOpenAI()
+
+sync_response = client.chat.completions.create(
+    model="openai:gpt-5.2",
+    messages=[{"role": "user", "content": "Say hello in 3 words"}],
+)
+print(sync_response.choices[0].message.content)
+
+# Responses API, streaming, cooldowns, virtual providers, multi-key rotation, etc.
+stream = client.chat.completions.create(
+    model="openai:gpt-5.1",
+    messages=[{"role": "user", "content": "Count from 1 to 5"}],
+    stream=True,
+)
+for chunk in stream:
+    if chunk.choices[0].delta.content:
+        print(chunk.choices[0].delta.content, end="")
+
+# Async usage mirrors the OpenAI SDK
+async_client = BorgAsyncOpenAI()
+async_response = await async_client.chat.completions.create(
+    model="google:gemini-3-pro-preview",
+    messages=[{"role": "user", "content": "One sentence on quantum computing"}],
+)
+print(async_response.choices[0].message.content)
+
+# Virtual providers work seamlessly
+response = client.chat.completions.create(
+    model="virtual_provider", # Defined in your BorgLLM config, with failover support and dynamic routing
+    messages=[{"role": "user", "content": "What's the weather like?"}]
+)
+print(response.choices[0].message.content)
+```
+
+These clients:
+
+1. Duck-type `openai.OpenAI` / `openai.AsyncOpenAI` – no API migration required
+2. Refresh BorgLLM configs on every call (cooldowns, virtual providers, key rotation)
+3. Support both `chat.completions.create` and the latest `responses.create` endpoint with streaming
+4. Respect the same cooldown + timeout overrides as the LangChain integration
+5. Are fully covered by a comprehensive test suite and showcased in [`examples/openai/`](examples/openai/)
+
+### LangChain Integration (Optional)
+
+> **Note**: Requires `pip install borgllm[langchain]`
+
+_Find more examples in the [examples/langchain](examples/langchain/) directory._
+
+Use `create_llm` to obtain a LangChain-compatible LLM instance. It handles provider selection, API key management, and rate limiting automatically.
+
+```python
+# Requires: pip install borgllm[langchain]
+from borgllm import create_llm
 from langchain_core.messages import HumanMessage
 
 # Explicitly specify provider and model
 mistral_llm = create_llm("mistralai:mistral-large-latest", temperature=0.7)
 
 # Choose any provider and model (list of supported models below)
-anthropic_llm = create_llm("anthropic:claude-sonnet-4", temperature=0.7)
+anthropic_llm = create_llm("anthropic:claude-opus-4-5", temperature=0.7)
 groq_llm = create_llm("groq:llama-3.3-70b-versatile", temperature=0.7)
-openai_llm = create_llm("openai:gpt-4o", temperature=0.7)
-featherless_llm = create_llm("featherless:NousResearch/Nous-Hermes-13b", temperature=0.7)
+openai_llm = create_llm("openai:gpt-5.2", temperature=0.7)
+google_llm = create_llm("google:gemini-3-pro-preview", temperature=0.7)
 
 # It's just a ChatOpenAI instance
 response = mistral_llm.invoke([HumanMessage(content="Hello, how are you?")])
 print(f"Mistral Response: {response.content}")
-
-# Hello, I am doing great! How can I help you today?
 ```
 
-You can specify a default provider in one place, and then call `create_llm` without an argument to use it.
+You can specify a default provider and call `create_llm` without arguments:
 
-```py
+```python
+from borgllm import set_default_provider, create_llm
+
 set_default_provider("deepseek:deepseek-chat")
-
-# And call create_llm without an argument
 llm = create_llm()
 
 response = llm.invoke([HumanMessage(content="Hello, how are you?")])
 print(f"DeepSeek Response: {response.content}")
 ```
 
-Or specify a custom configuration declaratively in `borg.yml` (optional).
+Or use virtual providers from `borg.yml`:
 
-```py
+```python
 # use a custom provider, for example Ollama or LM Studio
 custom_llm = create_llm("remote_gemma", temperature=0.7)
-response = custom_llm.invoke([HumanMessage(content="Hello, how are you?")])
-print(f"Remote Gemma Response: {response.content}")
 
 # Or use a virtual provider (from borg.yml)
 virtual_llm = create_llm("qwen-auto", temperature=0.7)
-response = virtual_llm.invoke([HumanMessage(content="Hello, how are you?")])
-print(f"Qwen Auto Response: {response.content}")
 ```
 
 With `borg.yml` you can use BorgLLM to create a virtual provider that automatically falls back to the best model for the task, and switch providers when you hit a rate limit or exceed the context window. You can also use BorgLLM to create a custom provider for your own model or API. Example:

@@ -5,10 +5,32 @@ API Reference
 
 This section provides detailed documentation for the BorgLLM API.
 
+Core Classes
+------------
+
+BorgLLM Configuration
+~~~~~~~~~~~~~~~~~~~~~
+
 .. automodule:: borgllm.borgllm
    :members: BorgLLM
    :undoc-members:
    :show-inheritance:
+
+OpenAI SDK Clients
+~~~~~~~~~~~~~~~~~~
+
+The primary way to use BorgLLM. These classes are drop-in replacements for the official OpenAI SDK.
+
+.. automodule:: borgllm.openai
+   :members: BorgOpenAI, BorgAsyncOpenAI
+   :undoc-members:
+   :show-inheritance:
+
+LangChain Integration (Optional)
+--------------------------------
+
+.. note::
+   Requires ``pip install borgllm[langchain]``
 
 .. automodule:: borgllm.langchain
    :undoc-members:
@@ -22,4 +44,5 @@ This section provides detailed documentation for the BorgLLM API.
 .. autofunction:: borgllm.langchain.create_llm
 
 .. note::
-   The `BorgLLMLangChainClient` class is a low-level component and is typically not manually initialized by users. It is primarily used internally by the `create_llm` convenience function to manage LLM configurations and handle rate limiting. 
+   The ``BorgLLMLangChainClient`` class is a low-level component typically not manually initialized.
+   Use the ``create_llm`` convenience function instead. 

@@ -1,0 +1,10 @@
+llm:
+  providers:
+    - name: "local_gemma"
+      base_url: "http://localhost:1234/v1"
+      model: "google/gemma-2-27b"
+      api_key: "${OPENAI_API_KEY}"  # Using OpenAI key as dummy for local server
+      temperature: 0.7
+      max_tokens: 32000
+
+  default_model: "local_gemma"
